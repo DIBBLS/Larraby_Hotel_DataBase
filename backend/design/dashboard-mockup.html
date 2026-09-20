@@ -1,0 +1,270 @@
+<!--
+  Front desk dashboard — visual mockup / reference only.
+  Not wired into the Next.js app. Built against a generic design-token
+  system (var(--surface-0), var(--text-accent), etc.) for previewing
+  layout and metrics before real components are built in app/.
+
+  Metrics shown here (to build for real once auth + the dashboard page exist):
+    - Available rooms today, check-ins/check-outs due, revenue today
+    - Today's bookings list (source pill: Online / Walk-in / WhatsApp, status pill)
+    - Room status grid (available / occupied / reserved / maintenance)
+    - Booking source breakdown (walk-in vs online vs WhatsApp vs phone)
+    - Returning guests (stay count, last stay date)
+-->
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.dash{background:var(--surface-0);min-height:600px;padding:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--surface-2);border-bottom:0.5px solid var(--border)}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.hotel-dot{width:28px;height:28px;border-radius:6px;background:#1a3c2e;display:flex;align-items:center;justify-content:center;font-size:11px;color:#c8a96e;font-weight:500}
+.hotel-name{font-size:14px;font-weight:500;color:var(--text-primary)}
+.hotel-sub{font-size:11px;color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.date-badge{font-size:12px;color:var(--text-secondary);background:var(--surface-1);border:0.5px solid var(--border);border-radius:var(--radius);padding:5px 10px}
+.notif{width:28px;height:28px;border-radius:var(--radius);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-secondary);position:relative}
+.notif-dot{position:absolute;top:5px;right:5px;width:6px;height:6px;border-radius:50%;background:var(--text-danger)}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--text-accent)}
+.layout{display:grid;grid-template-columns:160px 1fr;height:calc(100% - 57px)}
+.sidebar{background:var(--surface-1);border-right:0.5px solid var(--border);padding:12px 0}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 16px;font-size:13px;color:var(--text-secondary);cursor:pointer;border-radius:0}
+.nav-item.active{color:var(--text-primary);background:var(--fill-ghost-selected);font-weight:500}
+.nav-item i{font-size:16px}
+.nav-section{font-size:10px;letter-spacing:0.08em;color:var(--text-muted);padding:16px 16px 4px;text-transform:uppercase}
+.main{padding:20px;overflow:auto}
+.page-title{font-size:16px;font-weight:500;color:var(--text-primary);margin-bottom:4px}
+.page-sub{font-size:12px;color:var(--text-muted);margin-bottom:16px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.stat-card{background:var(--surface-1);border-radius:var(--radius);padding:12px 14px}
+.stat-label{font-size:11px;color:var(--text-muted);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.stat-label i{font-size:13px}
+.stat-val{font-size:22px;font-weight:500;color:var(--text-primary);line-height:1}
+.stat-note{font-size:11px;margin-top:4px}
+.stat-note.up{color:var(--text-success)}
+.stat-note.warn{color:var(--text-warning)}
+.stat-note.muted{color:var(--text-muted)}
+.row2{display:grid;grid-template-columns:1.4fr 1fr;gap:10px;margin-bottom:16px}
+.card{background:var(--surface-2);border:0.5px solid var(--border);border-radius:12px;padding:14px}
+.card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.card-title{font-size:13px;font-weight:500;color:var(--text-primary)}
+.card-action{font-size:11px;color:var(--text-accent);cursor:pointer}
+.booking-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:0.5px solid var(--border)}
+.booking-row:last-child{border-bottom:none}
+.bk-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;flex-shrink:0}
+.bk-info{flex:1;min-width:0}
+.bk-name{font-size:12px;font-weight:500;color:var(--text-primary)}
+.bk-meta{font-size:11px;color:var(--text-muted)}
+.pill{font-size:10px;padding:2px 7px;border-radius:10px;white-space:nowrap;font-weight:500}
+.pill-online{background:var(--bg-accent);color:var(--text-accent)}
+.pill-walkin{background:var(--bg-success);color:var(--text-success)}
+.pill-wa{background:#e6f4ea;color:#1a7a3c}
+.pill-pending{background:var(--bg-warning);color:var(--text-warning)}
+.pill-in{background:var(--bg-success);color:var(--text-success)}
+.pill-out{background:var(--bg-danger);color:var(--text-danger)}
+.room-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.room-cell{border-radius:6px;padding:6px 4px;text-align:center;cursor:pointer;border:0.5px solid var(--border)}
+.room-cell.available{background:var(--bg-success)}
+.room-cell.occupied{background:var(--bg-danger)}
+.room-cell.reserved{background:var(--bg-warning)}
+.room-cell.maintenance{background:var(--surface-1)}
+.room-num{font-size:11px;font-weight:500}
+.room-num.available{color:var(--text-success)}
+.room-num.occupied{color:var(--text-danger)}
+.room-num.reserved{color:var(--text-warning)}
+.room-num.maintenance{color:var(--text-muted)}
+.room-type{font-size:9px;color:var(--text-muted);margin-top:1px}
+.legend{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-secondary)}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+.row3{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.source-bar-wrap{display:flex;flex-direction:column;gap:6px}
+.source-row{display:flex;align-items:center;gap:8px}
+.source-label{font-size:12px;color:var(--text-secondary);width:64px;flex-shrink:0}
+.source-bar-bg{flex:1;height:8px;background:var(--surface-0);border-radius:4px;overflow:hidden}
+.source-bar-fill{height:100%;border-radius:4px}
+.source-pct{font-size:11px;color:var(--text-muted);width:30px;text-align:right}
+.returning-wrap{display:flex;flex-direction:column;gap:8px}
+.ret-row{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:0.5px solid var(--border)}
+.ret-row:last-child{border-bottom:none}
+.ret-av{width:30px;height:30px;border-radius:50%;background:var(--fill-ghost-selected);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--text-secondary);flex-shrink:0}
+.ret-info{flex:1}
+.ret-name{font-size:12px;font-weight:500;color:var(--text-primary)}
+.ret-meta{font-size:11px;color:var(--text-muted)}
+.ret-stays{font-size:11px;color:var(--text-accent);font-weight:500}
+</style>
+
+<div class="dash">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="hotel-dot">L</div>
+      <div>
+        <div class="hotel-name">Larabby Hotel</div>
+        <div class="hotel-sub">Management dashboard</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="date-badge"><i class="ti ti-calendar" style="font-size:12px;vertical-align:-1px;margin-right:4px" aria-hidden="true"></i>Wed, 16 Sep 2026</div>
+      <div class="notif" aria-label="Notifications"><i class="ti ti-bell" style="font-size:15px" aria-hidden="true"></i><div class="notif-dot"></div></div>
+      <div class="avatar">FD</div>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</div>
+      <div class="nav-item"><i class="ti ti-calendar-plus" aria-hidden="true"></i>New booking</div>
+      <div class="nav-item"><i class="ti ti-list" aria-hidden="true"></i>All bookings</div>
+      <div class="nav-item"><i class="ti ti-door" aria-hidden="true"></i>Rooms</div>
+      <div class="nav-section">Guests</div>
+      <div class="nav-item"><i class="ti ti-users" aria-hidden="true"></i>Guests</div>
+      <div class="nav-item"><i class="ti ti-repeat" aria-hidden="true"></i>Returning</div>
+      <div class="nav-section">Finance</div>
+      <div class="nav-item"><i class="ti ti-cash" aria-hidden="true"></i>Payments</div>
+      <div class="nav-item"><i class="ti ti-chart-bar" aria-hidden="true"></i>Reports</div>
+      <div class="nav-section">Admin</div>
+      <div class="nav-item"><i class="ti ti-settings" aria-hidden="true"></i>Settings</div>
+    </div>
+
+    <div class="main">
+      <div class="page-title">Good morning, Front Desk</div>
+      <div class="page-sub">Here's what's happening today at Larabby Hotel</div>
+
+      <div class="stat-grid">
+        <div class="stat-card">
+          <div class="stat-label"><i class="ti ti-door" aria-hidden="true"></i>Available rooms</div>
+          <div class="stat-val">4</div>
+          <div class="stat-note muted">of 10 total</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><i class="ti ti-login" aria-hidden="true"></i>Check-ins today</div>
+          <div class="stat-val">3</div>
+          <div class="stat-note warn">2 not yet arrived</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><i class="ti ti-logout" aria-hidden="true"></i>Check-outs today</div>
+          <div class="stat-val">2</div>
+          <div class="stat-note up">Both complete</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label"><i class="ti ti-cash" aria-hidden="true"></i>Revenue today</div>
+          <div class="stat-val" style="font-size:17px">₦245k</div>
+          <div class="stat-note up">+12% vs yesterday</div>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">Today's bookings</span>
+            <span class="card-action">View all ↗</span>
+          </div>
+          <div class="booking-row">
+            <div class="bk-avatar" style="background:var(--bg-accent);color:var(--text-accent)">AO</div>
+            <div class="bk-info"><div class="bk-name">Amaka Obi</div><div class="bk-meta">Room 201 · Check-in 2:00 PM</div></div>
+            <span class="pill pill-online">Online</span>
+            <span class="pill pill-in">In</span>
+          </div>
+          <div class="booking-row">
+            <div class="bk-avatar" style="background:var(--bg-success);color:var(--text-success)">KA</div>
+            <div class="bk-info"><div class="bk-name">Kunle Adeyemi</div><div class="bk-meta">Room 104 · Walk-in</div></div>
+            <span class="pill pill-walkin">Walk-in</span>
+            <span class="pill pill-in">In</span>
+          </div>
+          <div class="booking-row">
+            <div class="bk-avatar" style="background:#e6f4ea;color:#1a7a3c">BT</div>
+            <div class="bk-info"><div class="bk-name">Bola Taiwo</div><div class="bk-meta">Room 301 · Check-in 4:00 PM</div></div>
+            <span class="pill pill-wa">WhatsApp</span>
+            <span class="pill pill-pending">Pending</span>
+          </div>
+          <div class="booking-row">
+            <div class="bk-avatar" style="background:var(--bg-warning);color:var(--text-warning)">EM</div>
+            <div class="bk-info"><div class="bk-name">Emeka Madu</div><div class="bk-meta">Room 202 · Check-out 12:00 PM</div></div>
+            <span class="pill pill-walkin">Walk-in</span>
+            <span class="pill pill-out">Out</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">Room status</span>
+            <span class="card-action">Manage ↗</span>
+          </div>
+          <div class="legend">
+            <div class="leg-item"><div class="leg-dot" style="background:var(--fill-success)"></div>Available</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--fill-danger)"></div>Occupied</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--fill-warning)"></div>Reserved</div>
+            <div class="leg-item"><div class="leg-dot" style="background:var(--border-strong)"></div>Maintenance</div>
+          </div>
+          <div class="room-grid">
+            <div class="room-cell occupied"><div class="room-num occupied">101</div><div class="room-type">Standard</div></div>
+            <div class="room-cell occupied"><div class="room-num occupied">102</div><div class="room-type">Standard</div></div>
+            <div class="room-cell available"><div class="room-num available">103</div><div class="room-type">Standard</div></div>
+            <div class="room-cell reserved"><div class="room-num reserved">104</div><div class="room-type">Family</div></div>
+            <div class="room-cell occupied"><div class="room-num occupied">201</div><div class="room-type">Deluxe</div></div>
+            <div class="room-cell available"><div class="room-num available">202</div><div class="room-type">Deluxe</div></div>
+            <div class="room-cell occupied"><div class="room-num occupied">203</div><div class="room-type">Deluxe</div></div>
+            <div class="room-cell available"><div class="room-num available">204</div><div class="room-type">Family</div></div>
+            <div class="room-cell reserved"><div class="room-num reserved">301</div><div class="room-type">Suite</div></div>
+            <div class="room-cell maintenance"><div class="room-num maintenance">302</div><div class="room-type">Suite</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row3">
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">Booking source breakdown</span>
+            <span class="card-action">This month ↗</span>
+          </div>
+          <div class="source-bar-wrap">
+            <div class="source-row">
+              <span class="source-label">Walk-in</span>
+              <div class="source-bar-bg"><div class="source-bar-fill" style="width:42%;background:var(--fill-success)"></div></div>
+              <span class="source-pct">42%</span>
+            </div>
+            <div class="source-row">
+              <span class="source-label">Online</span>
+              <div class="source-bar-bg"><div class="source-bar-fill" style="width:31%;background:var(--fill-accent)"></div></div>
+              <span class="source-pct">31%</span>
+            </div>
+            <div class="source-row">
+              <span class="source-label">WhatsApp</span>
+              <div class="source-bar-bg"><div class="source-bar-fill" style="width:18%;background:#25d366"></div></div>
+              <span class="source-pct">18%</span>
+            </div>
+            <div class="source-row">
+              <span class="source-label">Phone</span>
+              <div class="source-bar-bg"><div class="source-bar-fill" style="width:9%;background:var(--border-stronger)"></div></div>
+              <span class="source-pct">9%</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title">Returning guests</span>
+            <span class="card-action">View all ↗</span>
+          </div>
+          <div class="returning-wrap">
+            <div class="ret-row">
+              <div class="ret-av">AO</div>
+              <div class="ret-info"><div class="ret-name">Amaka Obi</div><div class="ret-meta">Last stay: Aug 2026</div></div>
+              <div class="ret-stays">4 stays</div>
+            </div>
+            <div class="ret-row">
+              <div class="ret-av">KA</div>
+              <div class="ret-info"><div class="ret-name">Kunle Adeyemi</div><div class="ret-meta">Last stay: Jul 2026</div></div>
+              <div class="ret-stays">7 stays</div>
+            </div>
+            <div class="ret-row">
+              <div class="ret-av">EM</div>
+              <div class="ret-info"><div class="ret-name">Emeka Madu</div><div class="ret-meta">Last stay: Sep 2026</div></div>
+              <div class="ret-stays">2 stays</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

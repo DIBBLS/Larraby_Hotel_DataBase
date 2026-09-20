@@ -1,0 +1,241 @@
+// Larabby Hotel — Database Schema
+// Stack: Next.js + PostgreSQL + Prisma
+// Run: npx prisma migrate dev --name init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// ROOM TYPES
+// e.g. "Deluxe Room", "Executive Suite"
+// Defines the category, not the physical room
+// ─────────────────────────────────────────────
+model RoomType {
+  id          String   @id @default(cuid())
+  name        String   @unique         // "Standard", "Deluxe", "Suite", "Family"
+  description String?
+  pricePerNight Decimal @db.Decimal(10, 2)
+  maxGuests   Int
+  amenities   String[] // ["AC", "WiFi", "Balcony"]
+  imageUrls   String[]
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  rooms       Room[]
+}
+
+// ─────────────────────────────────────────────
+// ROOMS
+// Physical rooms in the hotel
+// Each room belongs to a RoomType
+// ─────────────────────────────────────────────
+model Room {
+  id          String     @id @default(cuid())
+  roomNumber  String     @unique   // "101", "202", "301"
+  floor       Int
+  roomTypeId  String
+  roomType    RoomType   @relation(fields: [roomTypeId], references: [id])
+  status      RoomStatus @default(AVAILABLE)
+  notes       String?    // Internal notes: "window AC faulty", "VIP room"
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  bookings    Booking[]
+  maintenanceLogs MaintenanceLog[]
+
+  @@index([roomTypeId])
+  @@index([status])
+}
+
+enum RoomStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+  RESERVED      // Held but not yet checked in
+}
+
+// ─────────────────────────────────────────────
+// GUESTS
+// Anyone who has ever stayed or booked
+// Walk-in guests are also created here
+// ─────────────────────────────────────────────
+model Guest {
+  id          String   @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String?  @unique
+  phone       String   @unique
+  idType      IdType?              // NIN, passport, driver's license
+  idNumber    String?
+  address     String?
+  nationality String?  @default("Nigerian")
+  notes       String?  // "VIP", "requested extra towels last time"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  bookings    Booking[]
+
+  @@index([phone])
+  @@index([email])
+}
+
+enum IdType {
+  NIN
+  PASSPORT
+  DRIVERS_LICENSE
+  VOTERS_CARD
+}
+
+// ─────────────────────────────────────────────
+// BOOKINGS
+// The central table. Covers both:
+//   - Online bookings (source: WEBSITE / WHATSAPP)
+//   - Walk-in bookings (source: WALK_IN)
+// ─────────────────────────────────────────────
+model Booking {
+  id              String        @id @default(cuid())
+  bookingRef      String        @unique @default(cuid()) // e.g. LBY-2024-0042
+
+  // Who
+  guestId         String
+  guest           Guest         @relation(fields: [guestId], references: [id])
+  guestCount      Int
+
+  // What room
+  roomId          String
+  room            Room          @relation(fields: [roomId], references: [id])
+
+  // When
+  checkInDate     DateTime      @db.Date
+  checkOutDate    DateTime      @db.Date
+  actualCheckIn   DateTime?     // Set when guest physically arrives
+  actualCheckOut  DateTime?     // Set when guest physically leaves
+
+  // Money
+  totalAmount     Decimal       @db.Decimal(10, 2)
+  amountPaid      Decimal       @db.Decimal(10, 2) @default(0)
+  discountAmount  Decimal       @db.Decimal(10, 2) @default(0)
+
+  // Status & source
+  status          BookingStatus @default(PENDING)
+  source          BookingSource
+  notes           String?       // "Early check-in requested", "allergic to feathers"
+
+  // Staff who handled it (for walk-ins and check-ins)
+  handledById     String?
+  handledBy       Staff?        @relation(fields: [handledById], references: [id])
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  payments        Payment[]
+
+  @@index([guestId])
+  @@index([roomId])
+  @@index([checkInDate, checkOutDate])
+  @@index([status])
+  @@index([bookingRef])
+}
+
+enum BookingStatus {
+  PENDING         // Created, not yet confirmed
+  CONFIRMED       // Confirmed, waiting for check-in
+  CHECKED_IN      // Guest is in the room
+  CHECKED_OUT     // Booking complete
+  CANCELLED       // Cancelled before check-in
+  NO_SHOW         // Confirmed but guest never arrived
+}
+
+enum BookingSource {
+  WALK_IN         // Front desk, physical arrival
+  WEBSITE         // Booked via the hotel website
+  WHATSAPP        // Came through WhatsApp (from the frontend widget)
+  PHONE           // Staff took a call and created the booking
+  AGENT           // Travel agent booking
+}
+
+// ─────────────────────────────────────────────
+// PAYMENTS
+// A booking can have multiple payments
+// (deposit first, balance at check-out)
+// ─────────────────────────────────────────────
+model Payment {
+  id          String        @id @default(cuid())
+  bookingId   String
+  booking     Booking       @relation(fields: [bookingId], references: [id])
+  amount      Decimal       @db.Decimal(10, 2)
+  method      PaymentMethod
+  reference   String?       // Paystack ref, bank transfer ref, etc.
+  status      PaymentStatus @default(PENDING)
+  paidAt      DateTime?
+  recordedBy  String?       // Staff ID who recorded a cash/transfer payment
+  notes       String?
+  createdAt   DateTime      @default(now())
+
+  @@index([bookingId])
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  CARD
+  PAYSTACK
+  POS
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  REFUNDED
+}
+
+// ─────────────────────────────────────────────
+// STAFF
+// Hotel staff who use the admin dashboard
+// ─────────────────────────────────────────────
+model Staff {
+  id          String    @id @default(cuid())
+  firstName   String
+  lastName    String
+  email       String    @unique
+  phone       String?
+  role        StaffRole
+  passwordHash String
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  bookings    Booking[] // Bookings this staff member handled
+}
+
+enum StaffRole {
+  SUPER_ADMIN   // Full access
+  MANAGER       // Can see reports, manage rooms and staff
+  FRONT_DESK    // Can create/manage bookings and check-ins
+  HOUSEKEEPING  // Can update room status only
+}
+
+// ─────────────────────────────────────────────
+// MAINTENANCE LOG
+// Tracks room maintenance periods
+// Prevents booking a room under maintenance
+// ─────────────────────────────────────────────
+model MaintenanceLog {
+  id          String    @id @default(cuid())
+  roomId      String
+  room        Room      @relation(fields: [roomId], references: [id])
+  reason      String
+  startDate   DateTime
+  endDate     DateTime?
+  resolvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([roomId])
+}

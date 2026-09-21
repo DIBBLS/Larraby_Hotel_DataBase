@@ -27,7 +27,7 @@ export async function getAvailableRooms(query: AvailabilityQuery) {
   //   existing.checkIn < newCheckOut  AND  existing.checkOut > newCheckIn
   const conflictingRoomIds = await prisma.booking.findMany({
     where: {
-      status: { in: ['PENDING', 'CONFIRMED', 'CHECKED_IN', 'RESERVED'] },
+      status: { in: ['PENDING', 'CONFIRMED', 'CHECKED_IN'] },
       checkInDate: { lt: checkOutDate },
       checkOutDate: { gt: checkInDate },
       ...(excludeBookingId && { id: { not: excludeBookingId } }),

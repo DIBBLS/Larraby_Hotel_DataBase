@@ -6,7 +6,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { isRoomAvailable, calculateBookingTotal } from '@/lib/availability'
 import { generateBookingRef } from '@/lib/booking-ref'
+import { requireStaff } from '@/lib/require-staff'
 import { BookingSource } from '@prisma/client'
+
+// Guests booking themselves through the website hit this with no session.
+// Every other source (walk-in, a call taken at the desk, an agent booking,
+// a WhatsApp chat staff key in) is staff entering a booking on someone's
+// behalf, so it requires a signed-in session — and handledById always
+// comes from that session, never from the request body.
+const SELF_SERVE_SOURCES: BookingSource[] = ['WEBSITE']
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,9 +37,6 @@ export async function POST(req: NextRequest) {
       source,         // WALK_IN | WEBSITE | WHATSAPP | PHONE | AGENT
       notes,
       discountPercent,
-
-      // Staff (for walk-in bookings)
-      handledById,
     }: {
       firstName: string
       lastName: string
@@ -46,12 +51,19 @@ export async function POST(req: NextRequest) {
       source: BookingSource
       notes?: string
       discountPercent?: number
-      handledById?: string
     } = body
 
     // ── Validate required fields ──────────────────────────────
     if (!firstName || !lastName || !phone || !roomId || !checkInStr || !checkOutStr || !guestCount || !source) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
+
+    // ── Staff-entered sources require a signed-in staff session ─
+    let handledById: string | undefined
+    if (!SELF_SERVE_SOURCES.includes(source)) {
+      const auth = await requireStaff()
+      if ('error' in auth) return auth.error
+      handledById = auth.staffId
     }
 
     const checkInDate = new Date(checkInStr)
@@ -178,6 +190,9 @@ export async function POST(req: NextRequest) {
 // GET /api/bookings — list bookings (for dashboard)
 export async function GET(req: NextRequest) {
   try {
+    const auth = await requireStaff()
+    if ('error' in auth) return auth.error
+
     const { searchParams } = new URL(req.url)
 
     const status = searchParams.get('status')

@@ -3,9 +3,13 @@
 
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireStaff } from '@/lib/require-staff'
 
 export async function GET() {
   try {
+    const auth = await requireStaff()
+    if ('error' in auth) return auth.error
+
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     const tomorrow = new Date(today)

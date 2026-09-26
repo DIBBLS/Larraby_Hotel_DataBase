@@ -3,25 +3,28 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireStaff } from '@/lib/require-staff'
 import { PaymentMethod } from '@prisma/client'
 
 type Params = { params: { id: string } }
 
 export async function POST(req: NextRequest, { params }: Params) {
   try {
+    const auth = await requireStaff()
+    if ('error' in auth) return auth.error
+    const recordedBy = auth.staffId
+
     const body = await req.json()
 
     const {
       amount,
       method,      // CASH | BANK_TRANSFER | CARD | PAYSTACK | POS
       reference,   // Paystack ref, bank transfer ref, etc.
-      recordedBy,  // Staff ID
       notes,
     }: {
       amount: number
       method: PaymentMethod
       reference?: string
-      recordedBy?: string
       notes?: string
     } = body
 
@@ -102,6 +105,9 @@ export async function POST(req: NextRequest, { params }: Params) {
 // GET /api/bookings/:id/payments — list payments for a booking
 export async function GET(_req: NextRequest, { params }: Params) {
   try {
+    const auth = await requireStaff()
+    if ('error' in auth) return auth.error
+
     const payments = await prisma.payment.findMany({
       where: { bookingId: params.id },
       orderBy: { createdAt: 'asc' },

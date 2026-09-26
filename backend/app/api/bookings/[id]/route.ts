@@ -4,12 +4,16 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { requireStaff } from '@/lib/require-staff'
 
 type Params = { params: { id: string } }
 
 // ── GET — single booking detail ──────────────────────────────
 export async function GET(_req: NextRequest, { params }: Params) {
   try {
+    const auth = await requireStaff()
+    if ('error' in auth) return auth.error
+
     const booking = await prisma.booking.findUnique({
       where: { id: params.id },
       include: {
@@ -33,8 +37,12 @@ export async function GET(_req: NextRequest, { params }: Params) {
 // ── PATCH — update booking status ────────────────────────────
 export async function PATCH(req: NextRequest, { params }: Params) {
   try {
+    const auth = await requireStaff()
+    if ('error' in auth) return auth.error
+    const handledById = auth.staffId
+
     const body = await req.json()
-    const { action, handledById, notes } = body
+    const { action, notes } = body
 
     // action: CHECK_IN | CHECK_OUT | CANCEL | NO_SHOW
 

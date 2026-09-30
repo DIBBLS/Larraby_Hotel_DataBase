@@ -46,8 +46,9 @@ The hotel's public landing page lives at the **repo root** (`index.html`, `larra
    - `DATABASE_URL` and `DIRECT_URL` from step 2
    - `NEXTAUTH_SECRET` — any random 32-byte string (e.g. from [1password.com/password-generator](https://1password.com/password-generator) or just mash the keyboard for 40 characters)
    - `NEXTAUTH_URL` — the `https://...vercel.app` URL Vercel gives this project
-5. **Deploy.** The build automatically runs `prisma migrate deploy` before `next build` (see `vercel-build` in `package.json`), so the schema is created in Supabase on first deploy — no command line required.
-6. **Seed sample data once.** The rooms/room-types/staff-login seed script (`prisma/seed.ts`) doesn't run automatically on deploy. Easiest way to run it the first time without a terminal: paste your two connection strings into this Claude session and ask it to run the migration/seed directly — it already has the repo cloned with dependencies installed. (Rotate the Supabase database password afterward if you'd rather it not sit in a chat transcript.)
+5. **Deploy.** The build automatically runs the schema migration, then seeds sample data, then builds the app (see `vercel-build` in `package.json`) — no command line required, and no separate seed step. Seeding uses `upsert` throughout so it's safe to run on every deploy; it won't duplicate data.
+
+The initial migration (`prisma/migrations/<timestamp>_init/`) was generated offline from the schema and is already committed — Vercel's build just applies it against your real database on first deploy.
 
 ### Local development
 

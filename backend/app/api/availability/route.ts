@@ -34,11 +34,19 @@ export async function GET(req: NextRequest) {
       )
     }
 
+    let guestCount: number | undefined
+    if (guests) {
+      guestCount = parseInt(guests)
+      if (!Number.isInteger(guestCount) || guestCount < 1) {
+        return NextResponse.json({ error: 'guests must be a positive whole number' }, { status: 400 })
+      }
+    }
+
     const rooms = await getAvailableRooms({
       checkInDate,
       checkOutDate,
       roomTypeId: roomTypeId ?? undefined,
-      guestCount: guests ? parseInt(guests) : undefined,
+      guestCount,
     })
 
     return NextResponse.json({

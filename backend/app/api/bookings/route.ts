@@ -16,6 +16,9 @@ import { BookingSource } from '@prisma/client'
 // comes from that session, never from the request body.
 const SELF_SERVE_SOURCES: BookingSource[] = ['WEBSITE']
 
+const PHONE_RE = /^\+?\d{7,15}$/
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -58,19 +61,43 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // ── Staff-entered sources require a signed-in staff session ─
-    let handledById: string | undefined
-    if (!SELF_SERVE_SOURCES.includes(source)) {
-      const auth = await requireStaff()
-      if ('error' in auth) return auth.error
-      handledById = auth.staffId
+    // ── Validate field formats ─────────────────────────────────
+    const cleanedPhone = phone.replace(/[\s-]/g, '')
+    if (!PHONE_RE.test(cleanedPhone)) {
+      return NextResponse.json({ error: 'Enter a valid phone number' }, { status: 400 })
+    }
+    if (email && !EMAIL_RE.test(email)) {
+      return NextResponse.json({ error: 'Enter a valid email address' }, { status: 400 })
+    }
+    if (!Number.isInteger(guestCount) || guestCount < 1) {
+      return NextResponse.json({ error: 'guestCount must be a positive whole number' }, { status: 400 })
     }
 
     const checkInDate = new Date(checkInStr)
     const checkOutDate = new Date(checkOutStr)
 
+    if (isNaN(checkInDate.getTime()) || isNaN(checkOutDate.getTime())) {
+      return NextResponse.json({ error: 'Invalid date format' }, { status: 400 })
+    }
     if (checkOutDate <= checkInDate) {
       return NextResponse.json({ error: 'Check-out must be after check-in' }, { status: 400 })
+    }
+
+    // ── Staff-entered sources require a signed-in staff session ─
+    // Self-serve guests can never set their own discount — only staff can.
+    let handledById: string | undefined
+    let safeDiscountPercent = 0
+    if (SELF_SERVE_SOURCES.includes(source)) {
+      safeDiscountPercent = 0
+    } else {
+      const auth = await requireStaff()
+      if ('error' in auth) return auth.error
+      handledById = auth.staffId
+
+      safeDiscountPercent = discountPercent ?? 0
+      if (safeDiscountPercent < 0 || safeDiscountPercent > 100) {
+        return NextResponse.json({ error: 'discountPercent must be between 0 and 100' }, { status: 400 })
+      }
     }
 
     // ── Double-booking check ───────────────────────────────────
@@ -123,7 +150,7 @@ export async function POST(req: NextRequest) {
         Number(room.roomType.pricePerNight),
         checkInDate,
         checkOutDate,
-        discountPercent ?? 0
+        safeDiscountPercent
       )
 
       // ── Create booking ───────────────────────────────────────

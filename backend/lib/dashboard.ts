@@ -132,7 +132,7 @@ export async function getSourceBreakdown(since?: Date) {
 
   const grouped = await prisma.booking.groupBy({
     by: ['source'],
-    where: { createdAt: { gte: start } },
+    where: { createdAt: { gte: start }, status: { not: 'CANCELLED' } },
     _count: { source: true },
   })
 

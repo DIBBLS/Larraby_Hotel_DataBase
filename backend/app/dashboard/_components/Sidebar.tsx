@@ -65,7 +65,7 @@ const NAV_MAIN: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: ICONS.dashboard },
   { href: '/dashboard/bookings/new', label: 'New booking', icon: ICONS.newBooking },
   { href: '/dashboard/bookings', label: 'All bookings', icon: ICONS.bookings },
-  { label: 'Rooms', icon: ICONS.rooms },
+  { href: '/dashboard/rooms', label: 'Rooms', icon: ICONS.rooms },
 ]
 const NAV_GUESTS: NavItem[] = [
   { label: 'Guests', icon: ICONS.guests },

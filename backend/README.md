@@ -10,21 +10,35 @@ Stack: **Next.js 14 · PostgreSQL · Prisma**
 ```
 backend/
 ├── prisma/
-│   ├── schema.prisma          # All models: Room, RoomType, Booking, Guest, Staff, Payment
-│   └── seed.ts                # Sample room types, rooms, and staff accounts
+│   ├── schema.prisma          # All models: Room, RoomType, Booking, Guest, Staff, Payment, MaintenanceLog
+│   ├── migrations/            # Applied automatically on deploy (vercel-build)
+│   └── seed.ts                # Sample room types, rooms, and staff accounts (also runs on deploy)
 ├── lib/
 │   ├── prisma.ts              # Prisma client singleton
+│   ├── auth.ts                # NextAuth config — staff credentials login
+│   ├── require-staff.ts       # Session guard used by every staff-only API route
 │   ├── availability.ts        # Anti-double-booking logic
-│   └── booking-ref.ts         # LBY-2024-0001 reference generator
+│   ├── booking-ref.ts         # LBY-2024-0001 reference generator
+│   └── dashboard.ts           # Query logic behind the dashboard (shared by the API route and the page)
 ├── design/
-│   └── dashboard-mockup.html  # Static reference mockup of the front desk dashboard (not wired in)
-└── app/api/
-    ├── availability/route.ts  # GET  — check available rooms for dates
-    ├── bookings/route.ts      # GET list · POST create booking
-    ├── bookings/[id]/
-    │   ├── route.ts           # GET detail · PATCH check-in/out/cancel
-    │   └── payments/route.ts  # GET payments · POST record payment
-    └── dashboard/route.ts     # GET — today's occupancy and revenue summary
+│   └── dashboard-mockup.html  # Early static reference mockup — superseded by app/dashboard/, kept for history
+└── app/
+    ├── api/
+    │   ├── auth/[...nextauth]/route.ts   # Staff sign-in/out
+    │   ├── availability/route.ts         # GET  — check available rooms for dates (public)
+    │   ├── bookings/route.ts             # GET list · POST create booking
+    │   ├── bookings/[id]/
+    │   │   ├── route.ts                  # GET detail · PATCH check-in/out/cancel
+    │   │   └── payments/route.ts         # GET payments · POST record payment
+    │   ├── rooms/route.ts                # GET every room + status
+    │   ├── rooms/[id]/route.ts           # PATCH set/clear maintenance
+    │   └── dashboard/route.ts            # GET — today's occupancy and revenue summary
+    ├── login/page.tsx                    # Staff sign-in screen
+    └── dashboard/                        # The actual front desk app (auth-guarded)
+        ├── page.tsx                      # Today's stats, room grid, source breakdown, returning guests
+        ├── bookings/page.tsx             # All bookings — search/filter + check-in/out/cancel
+        ├── bookings/new/page.tsx         # Walk-in / phone / agent booking creation
+        └── rooms/page.tsx                # Room list — set/clear maintenance
 ```
 
 The hotel's public landing page lives at the **repo root** (`index.html`, `larraby.css`) — this backend is a separate Next.js app in `backend/` and deploys as its own Vercel project.
@@ -160,6 +174,18 @@ GET /api/dashboard
 ```
 Returns today's occupancy, check-ins/outs due, pending online bookings, and revenue.
 
+### Rooms *(staff)*
+```
+GET /api/rooms
+```
+Every room with its current status and, if under maintenance, the open `MaintenanceLog` entry.
+```
+PATCH /api/rooms/:id
+{ "action": "SET_MAINTENANCE", "reason": "AC repair" }
+{ "action": "CLEAR_MAINTENANCE" }
+```
+`SET_MAINTENANCE` is rejected for a room that's currently `OCCUPIED` or `RESERVED` — resolve its booking first.
+
 ---
 
 ## Key design decisions
@@ -182,11 +208,13 @@ Returning guests reuse their record; their details can be updated on each bookin
 
 ---
 
-## Next steps (after this schema)
+## Next steps
 
-1. ~~**Auth** — NextAuth.js with credentials provider for staff login~~ done — see Authentication above
-2. **Front desk dashboard** — React UI for creating walk-in bookings, check-in/out (see `design/dashboard-mockup.html` for the planned layout and metrics)
-3. **Online booking form** — connects to the hotel website at the repo root, replacing/supplementing the WhatsApp-only flow
-4. **Paystack integration** — for online payments
-5. **Reports** — monthly occupancy, revenue by room type, source breakdown
-6. **Real database** — see "Deploying with Supabase + Vercel" above
+1. ~~**Auth**~~ — done, see Authentication above
+2. ~~**Front desk dashboard** — walk-in bookings, check-in/out~~ — done, see `app/dashboard/`
+3. ~~**Rooms management** — view rooms, set/clear maintenance~~ — done, see `app/dashboard/rooms/`
+4. **Payments UI** — the API (`POST /api/bookings/:id/payments`) exists; no staff screen records a payment yet, so a booking's balance is visible in `app/dashboard/bookings/` but not payable from the dashboard
+5. **Guests / returning guests pages** — a guest's full stay history isn't browsable yet, only summarized on the dashboard
+6. **Reports** — monthly occupancy, revenue by room type, source breakdown over time
+7. **Online booking form** — connects to the hotel website at the repo root, replacing/supplementing the WhatsApp-only flow
+8. **Paystack integration** — for online payments, with its own signature-verified webhook (not staff-session gated like the manual payments route)

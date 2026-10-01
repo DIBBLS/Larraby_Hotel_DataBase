@@ -64,7 +64,7 @@ type NavItem = { href?: string; label: string; icon: ReactNode }
 const NAV_MAIN: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: ICONS.dashboard },
   { href: '/dashboard/bookings/new', label: 'New booking', icon: ICONS.newBooking },
-  { label: 'All bookings', icon: ICONS.bookings },
+  { href: '/dashboard/bookings', label: 'All bookings', icon: ICONS.bookings },
   { label: 'Rooms', icon: ICONS.rooms },
 ]
 const NAV_GUESTS: NavItem[] = [

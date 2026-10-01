@@ -210,6 +210,16 @@ button { font-family: var(--font-body); }
 .lh-success-row { display: flex; justify-content: space-between; font-size: 13.5px; padding: 6px 0; border-bottom: 1px solid rgba(47,143,91,0.2); }
 .lh-success-row:last-child { border-bottom: none; }
 
+/* ── All bookings table ──────────────────────────────────── */
+.lh-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 760px; }
+.lh-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); padding: 0 10px 10px; border-bottom: 1px solid var(--border); }
+.lh-table td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.lh-table tr:last-child td { border-bottom: none; }
+.lh-btn-sm { font-size: 11.5px; font-weight: 600; padding: 6px 10px; border-radius: 7px; cursor: pointer; white-space: nowrap; }
+.lh-btn-sm:disabled { opacity: 0.6; cursor: default; }
+.lh-btn-sm-primary { background: var(--ink); color: #fff; border: none; }
+.lh-btn-sm-danger { background: var(--bad-wash); color: var(--bad); border: 1px solid transparent; }
+
 @media (max-width: 900px) {
   .lh-row2, .lh-row3 { grid-template-columns: 1fr; }
   .lh-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }

@@ -6,6 +6,9 @@ export default function Home() {
         This is the API service, not the hotel website. API routes live under{' '}
         <code>/api</code> — see <code>README.md</code> for the full reference.
       </p>
+      <p>
+        Staff: <a href="/login">sign in</a>
+      </p>
     </main>
   )
 }

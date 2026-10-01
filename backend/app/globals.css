@@ -1,0 +1,187 @@
+/* Larabby Hotel brand tokens — pulled from the live site's larraby.css */
+:root {
+  --ink: #111111;
+  --body: #4a4a4a;
+  --muted: #7a7a7a;
+  --paper: #edf1f8;
+  --surface: #ffffff;
+  --surface-2: #e5ebfa;
+  --border: #d7deef;
+
+  --gold: #b8912f;
+  --gold-deep: #8f7024;
+  --gold-wash: #f3e8ce;
+
+  --good: #2f8f5b;
+  --good-wash: #e3f3ea;
+  --warn: #b4791e;
+  --warn-wash: #fbf0dd;
+  --bad: #c0392b;
+  --bad-wash: #fbeae8;
+
+  --online: #4a6cf7;
+  --online-deep: #324fd1;
+  --online-wash: #e9edfd;
+  --whatsapp: #25d366;
+  --whatsapp-deep: #128c43;
+  --whatsapp-wash: #e3f9ec;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; }
+body { font-family: var(--font-body); color: var(--ink); background: var(--paper); }
+a { color: inherit; text-decoration: none; }
+button { font-family: var(--font-body); }
+
+/* ── Login ───────────────────────────────────────────────── */
+.lh-login-screen {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--ink);
+}
+.lh-login-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  border-radius: 14px;
+  padding: 36px 32px;
+}
+.lh-login-mark {
+  width: 40px; height: 40px; border-radius: 10px; background: var(--gold);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
+}
+.lh-login-mark span { font-family: var(--font-display); font-weight: 700; font-size: 20px; color: var(--ink); }
+.lh-login-title { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin: 0 0 4px; }
+.lh-login-sub { font-size: 13.5px; color: var(--muted); margin: 0 0 24px; }
+.lh-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.lh-field label { font-size: 12.5px; font-weight: 600; color: var(--body); }
+.lh-field input {
+  font-family: var(--font-body); font-size: 14px; padding: 11px 13px;
+  border: 1.5px solid var(--border); border-radius: 9px; outline: none; background: var(--surface); color: var(--ink);
+}
+.lh-field input:focus { border-color: var(--gold); }
+.lh-submit {
+  width: 100%; padding: 12px; border: none; border-radius: 10px;
+  background: var(--ink); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 6px;
+}
+.lh-submit:disabled { opacity: 0.6; cursor: default; }
+.lh-login-error {
+  background: var(--bad-wash); color: var(--bad); font-size: 13px;
+  padding: 10px 12px; border-radius: 8px; margin-bottom: 16px;
+}
+
+/* ── Dashboard shell ─────────────────────────────────────── */
+.lh-shell { min-height: 100%; display: flex; }
+
+.lh-sidebar { width: 216px; flex-shrink: 0; background: var(--ink); color: #fff; display: flex; flex-direction: column; padding: 22px 0; }
+.lh-sidebar-brand { display: flex; align-items: center; gap: 10px; padding: 0 20px 24px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 16px; }
+.lh-sidebar-mark { width: 34px; height: 34px; border-radius: 8px; background: var(--gold); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.lh-sidebar-mark span { font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--ink); }
+.lh-sidebar-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; white-space: nowrap; }
+.lh-sidebar-sub { font-size: 11px; color: rgba(255,255,255,0.55); white-space: nowrap; }
+
+.lh-nav { display: flex; flex-direction: column; gap: 2px; padding: 0 10px; }
+.lh-nav-section { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.35); padding: 18px 10px 6px; }
+.lh-nav-link { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 8px; font-size: 13.5px; font-weight: 500; color: rgba(255,255,255,0.75); min-height: 40px; }
+.lh-nav-link.active { background: var(--gold); color: var(--ink); }
+.lh-nav-link-disabled { color: rgba(255,255,255,0.3); cursor: default; }
+.lh-nav-soon { margin-left: auto; font-size: 9px; letter-spacing: 0.04em; text-transform: uppercase; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 999px; flex-shrink: 0; }
+.lh-nav-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+
+.lh-main-col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.lh-topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 28px; background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.lh-topbar-date { font-size: 13px; color: var(--muted); }
+.lh-topbar-right { display: flex; align-items: center; gap: 14px; }
+.lh-icon-btn { position: relative; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.lh-notif-dot { position: absolute; top: 6px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--bad); border: 1.5px solid var(--surface); }
+.lh-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--gold-wash); color: var(--gold-deep); display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700; }
+.lh-signout { background: none; border: 1px solid var(--border); border-radius: 9px; padding: 8px 12px; font-size: 12.5px; font-weight: 600; color: var(--body); cursor: pointer; }
+
+.lh-content { padding: 32px 40px 56px; display: flex; flex-direction: column; gap: 28px; max-width: 1240px; width: 100%; margin: 0 auto; }
+.lh-page-title { margin: 0 0 4px; font-family: var(--font-display); font-size: 28px; font-weight: 700; }
+.lh-page-sub { margin: 0; font-size: 14px; color: var(--muted); }
+
+/* ── Stat cards ──────────────────────────────────────────── */
+.lh-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.lh-stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 18px 16px; }
+.lh-stat-label { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.lh-stat-value { font-family: var(--font-display); font-size: 30px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; }
+.lh-stat-note { font-size: 12px; margin-top: 8px; }
+.lh-stat-note.muted { color: var(--muted); }
+.lh-stat-note.warn { color: var(--warn); }
+.lh-stat-note.good { color: var(--good); }
+
+/* ── Panels ──────────────────────────────────────────────── */
+.lh-row2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; }
+.lh-row3 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.lh-panel { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; min-width: 0; }
+.lh-panel-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.lh-panel-title { margin: 0; font-family: var(--font-display); font-size: 16px; font-weight: 700; }
+.lh-panel-action { background: none; border: none; color: var(--gold-deep); font-size: 12.5px; font-weight: 600; cursor: pointer; padding: 4px; }
+.lh-empty { font-size: 13px; color: var(--muted); padding: 10px 0; }
+
+/* ── Bookings list ───────────────────────────────────────── */
+.lh-booking-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--border); }
+.lh-booking-row:last-child { border-bottom: none; }
+.lh-booking-avatar { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; background: var(--surface-2); color: var(--body); }
+.lh-booking-info { flex: 1; min-width: 0; }
+.lh-booking-name { font-size: 13.5px; font-weight: 600; }
+.lh-booking-meta { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lh-pill { font-size: 10.5px; font-weight: 600; padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
+.lh-pill-walkin, .lh-pill-good { background: var(--good-wash); color: var(--good); }
+.lh-pill-online { background: var(--online-wash); color: var(--online-deep); }
+.lh-pill-whatsapp { background: var(--whatsapp-wash); color: var(--whatsapp-deep); }
+.lh-pill-phone, .lh-pill-agent { background: var(--surface-2); color: var(--body); }
+.lh-pill-warn { background: var(--warn-wash); color: var(--warn); }
+.lh-pill-bad { background: var(--bad-wash); color: var(--bad); }
+
+/* ── Room grid ───────────────────────────────────────────── */
+.lh-legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+.lh-legend-item { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--body); }
+.lh-legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+.lh-room-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
+.lh-room-cell { border: 1px solid var(--border); border-radius: 8px; padding: 8px 4px; text-align: center; }
+.lh-room-num { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.lh-room-type { font-size: 9px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lh-room-cell-available { background: var(--good-wash); }
+.lh-room-cell-available .lh-room-num { color: var(--good); }
+.lh-room-cell-occupied { background: var(--bad-wash); }
+.lh-room-cell-occupied .lh-room-num { color: var(--bad); }
+.lh-room-cell-reserved { background: var(--warn-wash); }
+.lh-room-cell-reserved .lh-room-num { color: var(--warn); }
+.lh-room-cell-maintenance { background: var(--surface-2); }
+.lh-room-cell-maintenance .lh-room-num { color: var(--muted); }
+
+/* ── Source breakdown ────────────────────────────────────── */
+.lh-source-row { display: flex; align-items: center; gap: 10px; }
+.lh-source-label { width: 62px; flex-shrink: 0; font-size: 12.5px; color: var(--body); }
+.lh-source-bar-bg { flex: 1; height: 8px; border-radius: 5px; background: var(--surface-2); overflow: hidden; min-width: 0; }
+.lh-source-bar-fill { height: 100%; border-radius: 5px; }
+.lh-source-pct { width: 32px; flex-shrink: 0; text-align: right; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* ── Returning guests ────────────────────────────────────── */
+.lh-returning-row { display: flex; align-items: center; gap: 11px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+.lh-returning-row:last-child { border-bottom: none; }
+.lh-returning-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); display: flex; align-items: center; justify-content: center; font-size: 11.5px; font-weight: 700; color: var(--body); flex-shrink: 0; }
+.lh-returning-name { font-size: 13px; font-weight: 600; }
+.lh-returning-meta { font-size: 11.5px; color: var(--muted); }
+.lh-returning-stays { font-size: 12px; font-weight: 600; color: var(--gold-deep); white-space: nowrap; }
+
+@media (max-width: 900px) {
+  .lh-row2, .lh-row3 { grid-template-columns: 1fr; }
+  .lh-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+  .lh-sidebar { width: 68px; }
+  .lh-sidebar .lh-nav-label, .lh-sidebar .lh-nav-section, .lh-sidebar .lh-nav-soon, .lh-sidebar-sub, .lh-sidebar-name { display: none; }
+  .lh-content { padding: 20px; }
+  .lh-stats { grid-template-columns: 1fr; }
+  .lh-room-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

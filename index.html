@@ -39,7 +39,7 @@
        PERFORMANCE: preload hero image so it starts loading immediately
        (improves Largest Contentful Paint score)
   ════════════════════════════════════════════════════════════════ -->
-  <link rel="preload" as="image" href="images/hero-bg.webp"/>
+  <link rel="preload" as="image" href="images/hero-bg.webp" type="image/webp" fetchpriority="high"/>
 
   <!-- FONTS -->
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -97,6 +97,7 @@
           <option value="" disabled selected>Room type</option>
           <option value="Deluxe">Deluxe Room</option>
           <option value="Super Deluxe">Super Deluxe Room</option>
+          <option value="Family Suite">Family Suite</option>
         </select>
       </div>
       <div class="booking-field">
@@ -108,6 +109,7 @@
         </select>
       </div>
       <button class="btn-check" id="btn-check-avail">Check Availability</button>
+    <div class="avail-result" id="w-avail-result"></div>
     </div>
     <button class="availability-trigger" id="mobile-avail-trigger">Check Availability</button>
   </div>
@@ -133,10 +135,10 @@
         </div>
       </div>
     </div>
-    <div class="welcome__media" role="group" aria-label="Larraby Hotel Epe interior photos">
+    <div class="welcome__media" role="group" aria-label="Larraby Hotel mascots">
       <!-- SEO: descriptive alt text, lazy loading on non-hero images -->
-      <img class="welcome__img" src="images/welcome.webp" alt="Comfortable room interior at Larraby Hotel, Epe Lagos" loading="lazy"/>
-      <img class="welcome__img welcome__img--alt" src="images/welcome-1.webp" alt="Larraby Hotel lounge and relaxation area in Epe" loading="lazy"/>
+      <img class="welcome__img" src="images/welcome.webp" alt="Illustration of a smiling bear in a linen suit raising a glass — Larraby Hotel mascot" width="889" height="1179" loading="lazy"/>
+      <img class="welcome__img welcome__img--alt" src="images/welcome-1.webp" alt="Illustration of a cheerful bear in a robe holding a cocktail — Larraby Hotel mascot" width="566" height="812" loading="lazy"/>
     </div>
   </div>
 </section>
@@ -171,7 +173,7 @@
           <span class="room-amenity"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg> A/C</span>
           <span class="room-amenity"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 9c-1.5-3.5-5-4-6.5-2s.5 5.5 3.5 5"/><path d="M12 15c1.5 3.5 5 4 6.5 2s-.5-5.5-3.5-5"/><path d="M9 12c-3.5 1.5-4 5-2 6.5s5.5-.5 5-3.5"/><path d="M15 12c3.5-1.5 4-5 2-6.5s-5.5.5-5 3.5"/></svg> Fan</span>
         </div>
-        <button class="btn-book-room" data-room="Super Deluxe Larraby Room" data-rate="30000" data-maxguests="3">Book This Room</button>
+        <button class="btn-book-room" data-room="Super Deluxe Larraby Room" data-roomtype="Super Deluxe" data-rate="30000" data-maxguests="3">Book This Room</button>
       </div>
     </div>
 
@@ -191,7 +193,7 @@
           <span class="room-amenity"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg> A/C</span>
           <span class="room-amenity"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 9c-1.5-3.5-5-4-6.5-2s.5 5.5 3.5 5"/><path d="M12 15c1.5 3.5 5 4 6.5 2s-.5-5.5-3.5-5"/><path d="M9 12c-3.5 1.5-4 5-2 6.5s5.5-.5 5-3.5"/><path d="M15 12c3.5-1.5 4-5 2-6.5s-5.5.5-5 3.5"/></svg> Fan</span>
         </div>
-        <button class="btn-book-room" data-room="Deluxe Larraby Room" data-rate="25000" data-maxguests="2">Book This Room</button>
+        <button class="btn-book-room" data-room="Deluxe Larraby Room" data-roomtype="Deluxe" data-rate="25000" data-maxguests="2">Book This Room</button>
       </div>
     </div>
 
@@ -211,7 +213,7 @@
           <span class="room-amenity"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg> A/C</span>
           <span class="room-amenity"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 9c-1.5-3.5-5-4-6.5-2s.5 5.5 3.5 5"/><path d="M12 15c1.5 3.5 5 4 6.5 2s-.5-5.5-3.5-5"/><path d="M9 12c-3.5 1.5-4 5-2 6.5s5.5-.5 5-3.5"/><path d="M15 12c3.5-1.5 4-5 2-6.5s-5.5.5-5 3.5"/></svg> Fan</span>
         </div>
-        <button class="btn-book-room" data-room="Deluxe Larraby Room" data-rate="25000" data-maxguests="2">Book This Room</button>
+        <button class="btn-book-room" data-room="Deluxe Larraby Room" data-roomtype="Deluxe" data-rate="25000" data-maxguests="2">Book This Room</button>
       </div>
     </div>
 
@@ -231,7 +233,7 @@
           <span class="room-amenity"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg> A/C</span>
           <span class="room-amenity"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 9c-1.5-3.5-5-4-6.5-2s.5 5.5 3.5 5"/><path d="M12 15c1.5 3.5 5 4 6.5 2s-.5-5.5-3.5-5"/><path d="M9 12c-3.5 1.5-4 5-2 6.5s5.5-.5 5-3.5"/><path d="M15 12c3.5-1.5 4-5 2-6.5s-5.5.5-5 3.5"/></svg> Fan</span>
         </div>
-        <button class="btn-book-room" data-room="Deluxe Larraby Room" data-rate="25000" data-maxguests="2">Book This Room</button>
+        <button class="btn-book-room" data-room="Deluxe Larraby Room" data-roomtype="Deluxe" data-rate="25000" data-maxguests="2">Book This Room</button>
       </div>
     </div>
 
@@ -248,7 +250,7 @@
           <span class="room-amenity">TV</span>
           <span class="room-amenity">A/C</span>
         </div>
-        <button class="btn-book-room" data-room="Deluxe Larraby Room" data-rate="25000" data-maxguests="2">Book This Room</button>
+        <button class="btn-book-room" data-room="Deluxe Larraby Room" data-roomtype="Deluxe" data-rate="25000" data-maxguests="2">Book This Room</button>
       </div>
     </div>
 
@@ -265,7 +267,7 @@
           <span class="room-amenity">TV</span>
           <span class="room-amenity">A/C</span>
         </div>
-        <button class="btn-book-room" data-room="Family Larraby Suite" data-rate="40000" data-maxguests="4">Book This Room</button>
+        <button class="btn-book-room" data-room="Family Larraby Suite" data-roomtype="Family Suite" data-rate="40000" data-maxguests="4">Book This Room</button>
       </div>
     </div>
 
@@ -412,6 +414,24 @@
   </div>
 </section>
 
+<!-- REVIEWS -->
+<section class="reviews" id="reviews">
+  <div class="section-accent"></div>
+  <h2 data-reveal>What Our Guests Say</h2>
+  <p class="sub" data-reveal data-delay="1">Real words from people who have stayed, eaten and unwound with us in Epe.</p>
+  <!-- Filled from the REVIEWS list in the script at the bottom of this page -->
+  <div class="reviews__grid" id="reviews-grid"></div>
+  <div class="reviews__nav" id="reviews-nav" hidden>
+    <button type="button" class="reviews__arrow" id="reviews-prev" aria-label="Previous reviews"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+    <button type="button" class="reviews__arrow" id="reviews-next" aria-label="Next reviews"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+  </div>
+  <p class="reviews__empty" id="reviews-empty" hidden>Stayed with us recently? We&rsquo;d love to hear how it went.</p>
+  <button type="button" class="btn-review" id="leave-review" data-reveal>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    Leave a Review
+  </button>
+</section>
+
 <!-- CONTACT BANNER -->
 <section class="contact-banner">
   <div class="contact-banner__bg"></div>
@@ -503,40 +523,45 @@
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer__wordmark">Larraby Hotel</div>
   <div class="footer__body">
-    <div class="footer-col">
-      <a href="#rooms">Rooms &amp; Suites</a>
-      <a href="#about">Experience</a>
-      <a href="#amenities">Facilities</a>
-      <a href="#glimpse">Gallery</a>
-      <a href="#contact">Location</a>
-      <a href="#rooms">Book a Room</a>
-    </div>
-    <div class="footer-col">
-      <!-- SEO: phone and email are now proper <a> links instead of <span> -->
-      <a href="tel:+2348149169698">+2348149169698</a>
-      <a href="mailto:larabbyhotel@gmail.com">larabbyhotel@gmail.com</a>
-      <a href="#rooms">Rooms</a>
-      <a href="#about">Experience</a>
-      <a href="#amenities">Facilities</a>
-      <a href="#contact">Contact</a>
-    </div>
-    <div class="footer-col">
+    <div class="footer__brand">
+      <a href="#home" class="footer__logo">
+        <img src="images/logo.webp" alt="" width="40" height="40" loading="lazy"/>
+        <span class="footer__wordmark">Larraby Hotel</span>
+      </a>
+      <p class="footer__tagline">Good times and warm hospitality in Odomola, Epe, Lagos.</p>
       <a href="https://wa.me/2348149169698" target="_blank" rel="noopener" class="footer__wa">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-        WhatsApp
+        Book on WhatsApp
       </a>
+    </div>
+    <nav class="footer-col" aria-label="Footer">
+      <h3 class="footer__heading">Explore</h3>
+      <a href="#rooms">Rooms &amp; Suites</a>
+      <a href="#amenities">Facilities</a>
+      <a href="#glimpse">Gallery</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#location">Location</a>
+    </nav>
+    <div class="footer-col">
+      <h3 class="footer__heading">Contact</h3>
+      <!-- SEO: phone and email are proper <a> links -->
+      <a href="tel:+2349030484636">0903 048 4636</a>
+      <a href="https://wa.me/2348149169698" target="_blank" rel="noopener">0814 916 9698 (WhatsApp)</a>
+      <a href="mailto:larabbyhotel@gmail.com">larabbyhotel@gmail.com</a>
+      <span>No 5, Alhaji Sherifat Street, Poka, Epe, Lagos</span>
     </div>
   </div>
   <div class="footer__bottom">
-    <a href="#" class="social-link" aria-label="Larraby Hotel on Instagram">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
-    </a>
-    <a href="#" class="social-link" aria-label="Larraby Hotel on TikTok">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.27 8.27 0 0 0 4.83 1.54V6.78a4.85 4.85 0 0 1-1.06-.09z"/></svg>
-    </a>
     <span class="footer__copy">&copy; 2026 Larraby Hotel International. All rights reserved.</span>
+    <div class="footer__social">
+      <a href="#" class="social-link" aria-label="Larraby Hotel on Instagram">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+      </a>
+      <a href="#" class="social-link" aria-label="Larraby Hotel on TikTok">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.27 8.27 0 0 0 4.83 1.54V6.78a4.85 4.85 0 0 1-1.06-.09z"/></svg>
+      </a>
+    </div>
   </div>
 </footer>
 
@@ -555,7 +580,7 @@
   <div class="modal-card">
     <button class="modal-close" id="avail-modal-close">&times;</button>
     <div class="modal-room-type">Check Availability</div>
-    <div class="modal-rate" style="color:var(--muted);font-weight:400;">Tell us your dates and we'll confirm on WhatsApp</div>
+    <div class="modal-rate" style="color:var(--muted);font-weight:400;">Tell us your dates and we'll check real-time availability</div>
     <div class="modal-field">
       <label>Check In</label>
       <input type="date" id="am-checkin"/>
@@ -570,6 +595,7 @@
         <option value="" disabled selected>Room type</option>
         <option value="Deluxe">Deluxe Room</option>
         <option value="Super Deluxe">Super Deluxe Room</option>
+        <option value="Family Suite">Family Suite</option>
       </select>
     </div>
     <div class="modal-field">
@@ -580,46 +606,110 @@
         <option>2 Guests</option>
       </select>
     </div>
-    <button class="btn-whatsapp" id="am-check-avail" style="margin-top:6px;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-      Check on WhatsApp
-    </button>
+    <button class="btn-whatsapp" id="am-check-avail" style="margin-top:6px;">Check Availability</button>
+    <div class="avail-result" id="am-avail-result"></div>
   </div>
+</div>
+
+<!-- REVIEW MODAL -->
+<div class="modal-overlay" id="review-modal" role="dialog" aria-modal="true" aria-labelledby="review-modal-title">
+  <form class="modal-card" id="review-form" name="review" method="POST" data-netlify="true" netlify-honeypot="bot-field" novalidate>
+    <!-- Netlify Forms: submissions appear in the Netlify dashboard under Forms → "review" -->
+    <input type="hidden" name="form-name" value="review"/>
+    <input type="hidden" name="rating" id="rv-rating-value"/>
+    <p hidden><label>Leave this empty: <input name="bot-field"/></label></p>
+    <button type="button" class="modal-close" id="review-modal-close" aria-label="Close">&times;</button>
+    <div class="modal-room-type" id="review-modal-title">Leave a Review</div>
+    <div class="modal-rate" style="color:var(--muted);font-weight:400;">Tell us about your stay. Our team reads every review.</div>
+    <div class="modal-field">
+      <label id="rv-rating-label">Your Rating</label>
+      <div class="rating-input" role="radiogroup" aria-labelledby="rv-rating-label" id="rv-rating">
+        <button type="button" role="radio" aria-checked="false" aria-label="1 star" data-value="1">&#9733;</button>
+        <button type="button" role="radio" aria-checked="false" aria-label="2 stars" data-value="2">&#9733;</button>
+        <button type="button" role="radio" aria-checked="false" aria-label="3 stars" data-value="3">&#9733;</button>
+        <button type="button" role="radio" aria-checked="false" aria-label="4 stars" data-value="4">&#9733;</button>
+        <button type="button" role="radio" aria-checked="false" aria-label="5 stars" data-value="5">&#9733;</button>
+      </div>
+    </div>
+    <div class="modal-field">
+      <label for="rv-name">Your Name</label>
+      <input type="text" id="rv-name" name="name" autocomplete="name" placeholder="e.g. Tolu A."/>
+    </div>
+    <div class="modal-field">
+      <label for="rv-text">Your Review</label>
+      <textarea id="rv-text" name="review" rows="4" placeholder="What did you enjoy? What could we do better?"></textarea>
+    </div>
+    <p class="review-error" id="rv-error" role="alert" hidden></p>
+    <button type="submit" class="btn-whatsapp" id="rv-submit">Send Review</button>
+    <p class="modal-note">We may feature your review on our website. Thank you for staying with us!</p>
+    <div class="review-thanks" id="rv-thanks" hidden>
+      <div class="review-thanks__icon">&#9733;</div>
+      <div class="modal-room-type">Thank you!</div>
+      <p>Your review has been sent to the Larraby team. We appreciate you taking the time.</p>
+      <button type="button" class="btn-review" id="rv-done">Close</button>
+    </div>
+  </form>
 </div>
 
 <!-- BOOKING MODAL -->
 <div class="modal-overlay" id="booking-modal">
   <div class="modal-card">
     <button class="modal-close" id="modal-close">&times;</button>
-    <div class="modal-room-type" id="modal-room-name">Deluxe Larraby Room</div>
-    <div class="modal-rate" id="modal-room-rate">&#8358;25,000 per night</div>
-    <div class="modal-field">
-      <label>Check In</label>
-      <input type="date" id="modal-checkin"/>
-    </div>
-    <div class="modal-field">
-      <label>Check Out</label>
-      <input type="date" id="modal-checkout"/>
-    </div>
-    <div class="modal-field">
-      <label>Number of Guests</label>
-      <select id="modal-guests">
-        <option>1 Guest</option>
-        <option>2 Guests</option>
-      </select>
-    </div>
-    <div class="modal-price-box">
-      <div>
-        <div class="label" id="modal-nights-label">Select dates to see total</div>
-        <div class="label" style="font-size:11px;margin-top:2px;color:#999">Prices are per 24 hours</div>
+
+    <div id="modal-form-body">
+      <div class="modal-room-type" id="modal-room-name">Deluxe Larraby Room</div>
+      <div class="modal-rate" id="modal-room-rate">&#8358;25,000 per night</div>
+      <div class="modal-field">
+        <label>Check In</label>
+        <input type="date" id="modal-checkin"/>
       </div>
-      <div class="total" id="modal-total">&mdash;</div>
+      <div class="modal-field">
+        <label>Check Out</label>
+        <input type="date" id="modal-checkout"/>
+      </div>
+      <div class="modal-field">
+        <label>Number of Guests</label>
+        <select id="modal-guests">
+          <option>1 Guest</option>
+          <option>2 Guests</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>First Name</label>
+        <input type="text" id="modal-fname" autocomplete="given-name"/>
+      </div>
+      <div class="modal-field">
+        <label>Last Name</label>
+        <input type="text" id="modal-lname" autocomplete="family-name"/>
+      </div>
+      <div class="modal-field">
+        <label>Phone Number</label>
+        <input type="tel" id="modal-phone" placeholder="e.g. 08012345678" autocomplete="tel"/>
+      </div>
+      <div class="modal-field">
+        <label>Email (optional)</label>
+        <input type="email" id="modal-email" autocomplete="email"/>
+      </div>
+      <div class="modal-error" id="modal-error" style="display:none;"></div>
+      <div class="modal-price-box">
+        <div>
+          <div class="label" id="modal-nights-label">Select dates to see total</div>
+          <div class="label" style="font-size:11px;margin-top:2px;color:#999">Prices are per 24 hours</div>
+        </div>
+        <div class="total" id="modal-total">&mdash;</div>
+      </div>
+      <button type="button" class="btn-whatsapp" id="modal-book-btn">Book Now</button>
+      <p class="modal-note">We'll hold this room once you confirm — no payment is taken online. Our team may call or text you to verify your stay.</p>
     </div>
-    <a href="#" class="btn-whatsapp" id="modal-wa-btn" target="_blank" rel="noopener">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-      Confirm on WhatsApp
-    </a>
-    <p class="modal-note">You'll be taken to WhatsApp to confirm your booking with the manager. No payment is taken online.</p>
+
+    <div id="modal-success" style="display:none;text-align:center;">
+      <div class="modal-success-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      </div>
+      <div class="modal-room-type">Booking Confirmed!</div>
+      <p class="modal-note" id="modal-success-text" style="margin-top:8px;"></p>
+      <button type="button" class="btn-whatsapp" id="modal-success-close" style="margin-top:8px;">Done</button>
+    </div>
   </div>
 </div>
 
@@ -685,6 +775,20 @@
 <script>
   const WA_NUMBER = '2348149169698';
 
+  // The hotel's backend API (separate Vercel project — see backend/README.md
+  // in the larraby_hotel_database repo). Replace with that project's real
+  // https://...vercel.app URL (or custom domain) before this goes live.
+  const API_BASE = 'https://REPLACE-WITH-YOUR-BACKEND-URL.vercel.app';
+
+  // Keep in sync with backend/prisma/seed.ts RoomType.maxGuests.
+  const ROOM_TYPE_MAX_GUESTS = { 'Deluxe': 2, 'Super Deluxe': 3, 'Family Suite': 4 };
+
+  function guestOptionsHtml(max, includePlaceholder) {
+    let html = includePlaceholder ? '<option value="" disabled selected>Guests</option>' : '';
+    for (let i = 1; i <= max; i++) html += '<option>' + i + ' Guest' + (i > 1 ? 's' : '') + '</option>';
+    return html;
+  }
+
   // ── Nav scroll tint
   const header = document.getElementById('site-header');
   window.addEventListener('scroll', () => {
@@ -695,26 +799,90 @@
   const wRoomType = document.getElementById('w-roomtype');
   const wGuests   = document.getElementById('w-guests');
   wRoomType.addEventListener('change', function() {
-    const isSuper = this.value === 'Super Deluxe';
-    wGuests.innerHTML = isSuper
-      ? '<option value="" disabled selected>Guests</option><option>1 Guest</option><option>2 Guests</option><option>3 Guests</option>'
-      : '<option value="" disabled selected>Guests</option><option>1 Guest</option><option>2 Guests</option>';
+    wGuests.innerHTML = guestOptionsHtml(ROOM_TYPE_MAX_GUESTS[this.value] || 2, true);
   });
 
-  // ── Check Availability → WhatsApp (shared helper)
-  function fireAvailabilityCheck(checkin, checkout, roomtype, guests) {
-    const fmt = d => d ? new Date(d).toDateString() : 'Not selected';
-    const msg = `Hello! I'd like to check availability at Larraby Hotel.\n\nRoom Type: ${roomtype || 'Not selected'}\nCheck In: ${fmt(checkin)}\nCheck Out: ${fmt(checkout)}\nGuests: ${guests || 'Not selected'}\n\nThank you!`;
-    window.open('https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+  // ── Check Availability → real backend lookup, shown inline
+  async function checkAvailability({ checkin, checkout, roomtype, guestsLabel, resultEl, button }) {
+    resultEl.className = 'avail-result';
+    resultEl.innerHTML = '';
+    resultEl.style.display = 'none';
+
+    if (!checkin || !checkout || !roomtype || !guestsLabel) {
+      resultEl.textContent = 'Please fill in check-in, check-out, room type and guests.';
+      resultEl.classList.add('error');
+      resultEl.style.display = 'block';
+      return { available: false };
+    }
+    if (new Date(checkout) <= new Date(checkin)) {
+      resultEl.textContent = 'Check-out must be after check-in.';
+      resultEl.classList.add('error');
+      resultEl.style.display = 'block';
+      return { available: false };
+    }
+
+    const guestCount = parseInt(guestsLabel);
+    const originalText = button.textContent;
+    button.disabled = true;
+    button.textContent = 'Checking...';
+
+    try {
+      const url = API_BASE + '/api/availability?checkIn=' + encodeURIComponent(checkin) +
+        '&checkOut=' + encodeURIComponent(checkout) + '&guests=' + guestCount;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+
+      const matches = (data.rooms || []).filter(r => r.type === roomtype);
+
+      if (matches.length > 0) {
+        resultEl.textContent = matches.length + ' ' + roomtype + ' room' + (matches.length > 1 ? 's' : '') + ' available for your dates.';
+        resultEl.classList.add('success');
+        resultEl.style.display = 'block';
+
+        const best = matches[0];
+        openBookingModal({
+          roomType: roomtype,
+          displayName: roomtype + ' Larraby Room',
+          rate: Number(best.pricePerNight),
+          maxGuests: best.maxGuests,
+          checkin, checkout,
+          guestCount,
+        });
+        return { available: true };
+      }
+
+      resultEl.textContent = 'Sorry, no ' + roomtype + ' rooms are available for those dates. Try different dates, or ';
+      const waLink = document.createElement('a');
+      waLink.href = 'https://wa.me/' + WA_NUMBER;
+      waLink.target = '_blank';
+      waLink.rel = 'noopener';
+      waLink.textContent = 'message us on WhatsApp';
+      resultEl.appendChild(waLink);
+      resultEl.classList.add('error');
+      resultEl.style.display = 'block';
+      return { available: false };
+
+    } catch (err) {
+      resultEl.textContent = 'Could not check availability right now. Please try again or call us.';
+      resultEl.classList.add('error');
+      resultEl.style.display = 'block';
+      return { available: false };
+    } finally {
+      button.disabled = false;
+      button.textContent = originalText;
+    }
   }
 
   document.getElementById('btn-check-avail').addEventListener('click', function() {
-    fireAvailabilityCheck(
-      document.getElementById('w-checkin').value,
-      document.getElementById('w-checkout').value,
-      wRoomType.value,
-      wGuests.value
-    );
+    checkAvailability({
+      checkin: document.getElementById('w-checkin').value,
+      checkout: document.getElementById('w-checkout').value,
+      roomtype: wRoomType.value,
+      guestsLabel: wGuests.value,
+      resultEl: document.getElementById('w-avail-result'),
+      button: this,
+    });
   });
 
   // ── Mobile "Check Availability" trigger → opens availability modal
@@ -733,18 +901,18 @@
     document.body.style.overflow = '';
   }
   amRoomType.addEventListener('change', function() {
-    const isSuper = this.value === 'Super Deluxe';
-    amGuests.innerHTML = isSuper
-      ? '<option value="" disabled selected>Guests</option><option>1 Guest</option><option>2 Guests</option><option>3 Guests</option>'
-      : '<option value="" disabled selected>Guests</option><option>1 Guest</option><option>2 Guests</option>';
+    amGuests.innerHTML = guestOptionsHtml(ROOM_TYPE_MAX_GUESTS[this.value] || 2, true);
   });
-  document.getElementById('am-check-avail').addEventListener('click', function() {
-    fireAvailabilityCheck(
-      document.getElementById('am-checkin').value,
-      document.getElementById('am-checkout').value,
-      amRoomType.value,
-      amGuests.value
-    );
+  document.getElementById('am-check-avail').addEventListener('click', async function() {
+    const result = await checkAvailability({
+      checkin: document.getElementById('am-checkin').value,
+      checkout: document.getElementById('am-checkout').value,
+      roomtype: amRoomType.value,
+      guestsLabel: amGuests.value,
+      resultEl: document.getElementById('am-avail-result'),
+      button: this,
+    });
+    if (result.available) closeAvailModal();
   });
 
   // ── About Us expandable panel
@@ -773,20 +941,36 @@
   }, 3500);
 
   // ── Booking modal
-  const modal      = document.getElementById('booking-modal');
-  const modalName  = document.getElementById('modal-room-name');
-  const modalRate  = document.getElementById('modal-room-rate');
-  const modalGuest = document.getElementById('modal-guests');
-  const modalCI    = document.getElementById('modal-checkin');
-  const modalCO    = document.getElementById('modal-checkout');
-  const modalLabel = document.getElementById('modal-nights-label');
-  const modalTotal = document.getElementById('modal-total');
-  const modalWA    = document.getElementById('modal-wa-btn');
-  let currentRate  = 25000;
-  let currentRoom  = 'Deluxe Larraby Room';
+  const modal         = document.getElementById('booking-modal');
+  const modalFormBody = document.getElementById('modal-form-body');
+  const modalSuccess  = document.getElementById('modal-success');
+  const modalName     = document.getElementById('modal-room-name');
+  const modalRate     = document.getElementById('modal-room-rate');
+  const modalGuest    = document.getElementById('modal-guests');
+  const modalCI       = document.getElementById('modal-checkin');
+  const modalCO       = document.getElementById('modal-checkout');
+  const modalLabel    = document.getElementById('modal-nights-label');
+  const modalTotal    = document.getElementById('modal-total');
+  const modalError    = document.getElementById('modal-error');
+  const modalBookBtn  = document.getElementById('modal-book-btn');
+  const modalFname    = document.getElementById('modal-fname');
+  const modalLname    = document.getElementById('modal-lname');
+  const modalPhone    = document.getElementById('modal-phone');
+  const modalEmail    = document.getElementById('modal-email');
+  let currentRate     = 25000;
+  let currentRoomType = 'Deluxe';
 
   function formatNaira(n) {
-    return '\u20A6' + n.toLocaleString('en-NG');
+    return '₦' + n.toLocaleString('en-NG');
+  }
+
+  function showModalError(msg) {
+    modalError.textContent = msg;
+    modalError.style.display = 'block';
+  }
+  function hideModalError() {
+    modalError.style.display = 'none';
+    modalError.textContent = '';
   }
 
   function updatePrice() {
@@ -797,35 +981,50 @@
       const total  = nights * currentRate;
       modalLabel.textContent = formatNaira(currentRate) + ' x ' + nights + ' night' + (nights > 1 ? 's' : '');
       modalTotal.textContent = formatNaira(total);
-      const guests = modalGuest.value;
-      const msg = 'Hello! I would like to book a room at Larraby Hotel.\n\nRoom: ' + currentRoom + '\nCheck In: ' + ci.toDateString() + '\nCheck Out: ' + co.toDateString() + '\nDuration: ' + nights + ' night' + (nights > 1 ? 's' : '') + '\nGuests: ' + guests + '\nEstimated Total: ' + formatNaira(total) + '\n\nPlease confirm availability. Thank you!';
-      modalWA.href = 'https://wa.me/' + WA_NUMBER + '?text=' + encodeURIComponent(msg);
     } else {
       modalLabel.textContent = 'Select dates to see total';
-      modalTotal.textContent = '\u2014';
-      modalWA.href = 'https://wa.me/' + WA_NUMBER;
+      modalTotal.textContent = '—';
     }
+  }
+
+  // Opens the booking modal pre-filled, either from a "Book This Room" card
+  // (dates unknown yet) or from a successful availability check (dates +
+  // guest count already known).
+  function openBookingModal({ roomType, displayName, rate, maxGuests, checkin, checkout, guestCount }) {
+    currentRoomType = roomType;
+    currentRate = rate;
+    modalName.textContent = displayName;
+    modalRate.textContent = formatNaira(currentRate) + ' per night';
+    modalGuest.innerHTML = guestOptionsHtml(maxGuests, false);
+    modalCI.value = checkin || '';
+    modalCO.value = checkout || '';
+    if (guestCount) {
+      const opt = [...modalGuest.options].find(o => parseInt(o.textContent) === guestCount);
+      if (opt) modalGuest.value = opt.textContent;
+    }
+    modalFname.value = '';
+    modalLname.value = '';
+    modalPhone.value = '';
+    modalEmail.value = '';
+    hideModalError();
+    modalFormBody.style.display = '';
+    modalSuccess.style.display = 'none';
+    updatePrice();
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
   }
 
   document.querySelectorAll('.btn-book-room').forEach(btn => {
     btn.addEventListener('click', function() {
-      currentRoom = this.dataset.room;
-      currentRate = parseInt(this.dataset.rate);
-      const maxGuests = parseInt(this.dataset.maxguests);
-      modalName.textContent = currentRoom;
-      modalRate.textContent = formatNaira(currentRate) + ' per night';
-      let guestOpts = '';
-      for (let i = 1; i <= maxGuests; i++) {
-        guestOpts += '<option>' + i + ' Guest' + (i > 1 ? 's' : '') + '</option>';
-      }
-      modalGuest.innerHTML = guestOpts;
-      modalCI.value = '';
-      modalCO.value = '';
-      modalLabel.textContent = 'Select dates to see total';
-      modalTotal.textContent = '\u2014';
-      modalWA.href = 'https://wa.me/' + WA_NUMBER;
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
+      openBookingModal({
+        roomType: this.dataset.roomtype,
+        displayName: this.dataset.room,
+        rate: parseInt(this.dataset.rate),
+        maxGuests: parseInt(this.dataset.maxguests),
+        checkin: '',
+        checkout: '',
+        guestCount: null,
+      });
     });
   });
 
@@ -837,9 +1036,96 @@
     document.body.style.overflow = '';
   }
 
+  document.getElementById('modal-success-close').addEventListener('click', closeModal);
+
   modalCI.addEventListener('change', updatePrice);
   modalCO.addEventListener('change', updatePrice);
   modalGuest.addEventListener('change', updatePrice);
+
+  // ── Book Now → real booking, with a last-second availability re-check
+  modalBookBtn.addEventListener('click', async function() {
+    hideModalError();
+
+    const firstName  = modalFname.value.trim();
+    const lastName   = modalLname.value.trim();
+    const phone      = modalPhone.value.trim();
+    const email      = modalEmail.value.trim();
+    const checkin    = modalCI.value;
+    const checkout   = modalCO.value;
+    const guestCount = parseInt(modalGuest.value);
+
+    if (!firstName || !lastName || !phone) {
+      showModalError('Please fill in your name and phone number.');
+      return;
+    }
+    if (!checkin || !checkout) {
+      showModalError('Please select your check-in and check-out dates.');
+      return;
+    }
+    if (new Date(checkout) <= new Date(checkin)) {
+      showModalError('Check-out must be after check-in.');
+      return;
+    }
+    if (!guestCount) {
+      showModalError('Please select number of guests.');
+      return;
+    }
+
+    const originalText = modalBookBtn.textContent;
+    modalBookBtn.disabled = true;
+    modalBookBtn.textContent = 'Checking availability...';
+
+    try {
+      const availUrl = API_BASE + '/api/availability?checkIn=' + encodeURIComponent(checkin) +
+        '&checkOut=' + encodeURIComponent(checkout) + '&guests=' + guestCount;
+      const availRes = await fetch(availUrl);
+      const availData = await availRes.json();
+      if (!availRes.ok) throw new Error(availData.error || 'Could not check availability.');
+
+      const match = (availData.rooms || []).find(r => r.type === currentRoomType);
+      if (!match) {
+        showModalError('Sorry, this room type is no longer available for those dates. Please try different dates.');
+        return;
+      }
+
+      modalBookBtn.textContent = 'Booking...';
+
+      const bookRes = await fetch(API_BASE + '/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          firstName, lastName, phone,
+          email: email || undefined,
+          roomId: match.id,
+          checkInDate: checkin,
+          checkOutDate: checkout,
+          guestCount,
+          source: 'WEBSITE',
+        }),
+      });
+      const bookData = await bookRes.json();
+
+      if (!bookRes.ok) {
+        if (bookRes.status === 409) {
+          showModalError('Sorry, that room was just booked by someone else. Please try different dates.');
+        } else {
+          showModalError(bookData.error || 'Something went wrong. Please try again or contact us on WhatsApp.');
+        }
+        return;
+      }
+
+      document.getElementById('modal-success-text').innerHTML =
+        'Your reference is <strong>' + bookData.booking.bookingRef + '</strong>. We look forward to hosting you — our team may call or text ' + phone + ' to confirm.';
+      modalFormBody.style.display = 'none';
+      modalSuccess.style.display = 'block';
+
+    } catch (err) {
+      showModalError('Could not reach our booking system. Please check your connection, or message us on WhatsApp.');
+    } finally {
+      modalBookBtn.disabled = false;
+      modalBookBtn.textContent = originalText;
+    }
+  });
 
   // ── Contact form → WhatsApp
   document.getElementById('btn-contact-submit').addEventListener('click', function() {
@@ -873,6 +1159,122 @@
       hamburger.setAttribute('aria-label', 'Open menu');
     });
   });
+
+  // ── Reviews
+  // Add real guest reviews here (e.g. copied from Google or WhatsApp, with the
+  // guest's permission). Each entry: { name, text, rating (1-5), source }.
+  // While the list is empty the section only shows the "Leave a Review" button.
+  const REVIEWS = [
+    // { name: 'Guest name', text: 'What they said…', rating: 5, source: 'Google' },
+    { name: 'Daniel A.', rating: 5, text: 'The room was clean, comfortable, and exactly what I needed for a weekend stay. The staff were welcoming and helpful. I’ll definitely be coming back.' },
+    { name: 'Blessing O.', rating: 5, text: 'I really enjoyed my stay at Larraby. The environment was peaceful, the room was neat, and the service was excellent. Great place to relax.' },
+    { name: 'Emmanuel K.', rating: 4, text: 'A very nice hotel with a calm atmosphere. The room was comfortable and the staff were friendly. I had a pleasant experience overall.' },
+    { name: 'Favour T.', rating: 5, text: 'From check-in to check-out, everything was smooth. The hotel is beautiful, the rooms are well maintained, and the staff made me feel welcome.' },
+  ];
+
+  const reviewsGrid = document.getElementById('reviews-grid');
+  const esc = (t) => String(t).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  if (REVIEWS.length) {
+    reviewsGrid.innerHTML = REVIEWS.map((r, i) => {
+      const n = Math.max(1, Math.min(5, Math.round(r.rating || 5)));
+      return `<figure class="review-card" data-reveal data-delay="${i % 3 + 1}">
+        <div class="review-card__stars" aria-label="${n} out of 5 stars">${'★'.repeat(n)}<span>${'★'.repeat(5 - n)}</span></div>
+        <blockquote>${esc(r.text)}</blockquote>
+        <figcaption><strong>${esc(r.name)}</strong>${r.source ? ` · ${esc(r.source)}` : ''}</figcaption>
+      </figure>`;
+    }).join('');
+  } else {
+    reviewsGrid.hidden = true;
+    document.getElementById('reviews-empty').hidden = false;
+  }
+
+  // Slider arrows: scroll one card at a time; hidden when every card already fits
+  const reviewsNav  = document.getElementById('reviews-nav');
+  const reviewsPrev = document.getElementById('reviews-prev');
+  const reviewsNext = document.getElementById('reviews-next');
+  function reviewStep() {
+    const card = reviewsGrid.querySelector('.review-card');
+    return card ? card.offsetWidth + 20 : reviewsGrid.clientWidth;
+  }
+  function updateReviewNav() {
+    const max = reviewsGrid.scrollWidth - reviewsGrid.clientWidth;
+    reviewsNav.hidden = max <= 4;
+    reviewsPrev.disabled = reviewsGrid.scrollLeft <= 4;
+    reviewsNext.disabled = reviewsGrid.scrollLeft >= max - 4;
+  }
+  reviewsPrev.addEventListener('click', () => reviewsGrid.scrollBy({ left: -reviewStep() }));
+  reviewsNext.addEventListener('click', () => reviewsGrid.scrollBy({ left: reviewStep() }));
+  reviewsGrid.addEventListener('scroll', updateReviewNav, { passive: true });
+  window.addEventListener('resize', updateReviewNav);
+  updateReviewNav();
+
+  // ── Review modal: collects a review and sends it to the hotel on WhatsApp
+  const reviewModal = document.getElementById('review-modal');
+  const reviewForm  = document.getElementById('review-form');
+  const ratingBtns  = [...document.querySelectorAll('#rv-rating button')];
+  const rvError     = document.getElementById('rv-error');
+  let reviewRating  = 0;
+
+  function paintRating(n) {
+    ratingBtns.forEach(b => {
+      const v = +b.dataset.value;
+      b.classList.toggle('on', v <= n);
+      b.setAttribute('aria-checked', v === reviewRating ? 'true' : 'false');
+    });
+  }
+  ratingBtns.forEach(b => {
+    b.addEventListener('click', () => { reviewRating = +b.dataset.value; paintRating(reviewRating); rvError.hidden = true; });
+    b.addEventListener('mouseenter', () => paintRating(+b.dataset.value));
+  });
+  document.getElementById('rv-rating').addEventListener('mouseleave', () => paintRating(reviewRating));
+
+  function closeReview() {
+    reviewModal.classList.remove('active');
+    if (!reviewForm.classList.contains('is-sent')) return;
+    setTimeout(() => {
+      reviewForm.reset(); reviewRating = 0; paintRating(0);
+      reviewForm.classList.remove('is-sent');
+      document.getElementById('rv-thanks').hidden = true;
+    }, 300);
+  }
+  document.getElementById('leave-review').addEventListener('click', () => {
+    reviewModal.classList.add('active');
+    setTimeout(() => ratingBtns[0].focus(), 50);
+  });
+  document.getElementById('review-modal-close').addEventListener('click', closeReview);
+  reviewModal.addEventListener('click', e => { if (e.target === reviewModal) closeReview(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && reviewModal.classList.contains('active')) closeReview(); });
+
+  reviewForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const name = document.getElementById('rv-name').value.trim();
+    const text = document.getElementById('rv-text').value.trim();
+    const missing = [!reviewRating && 'a rating', !name && 'your name', !text && 'your review'].filter(Boolean);
+    if (missing.length) {
+      rvError.textContent = 'Please add ' + missing.join(', ').replace(/, ([^,]*)$/, ' and $1') + '.';
+      rvError.hidden = false;
+      return;
+    }
+    document.getElementById('rv-rating-value').value = reviewRating;
+    const submitBtn = document.getElementById('rv-submit');
+    submitBtn.disabled = true; submitBtn.textContent = 'Sending…';
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(new FormData(reviewForm)).toString()
+    }).then(res => {
+      if (!res.ok) throw new Error(res.status);
+      reviewForm.classList.add('is-sent');
+      document.getElementById('rv-thanks').hidden = false;
+    }).catch(() => {
+      rvError.textContent = 'Sorry, your review could not be sent. Please check your connection and try again.';
+      rvError.hidden = false;
+    }).finally(() => {
+      submitBtn.disabled = false; submitBtn.textContent = 'Send Review';
+    });
+  });
+
+  document.getElementById('rv-done').addEventListener('click', closeReview);
 
   // ── Scroll reveal
   const revealObserver = new IntersectionObserver((entries) => {

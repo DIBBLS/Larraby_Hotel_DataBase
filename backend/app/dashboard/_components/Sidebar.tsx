@@ -63,7 +63,7 @@ type NavItem = { href?: string; label: string; icon: ReactNode }
 // disabled rows instead of linking to a page that would 404.
 const NAV_MAIN: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard', icon: ICONS.dashboard },
-  { label: 'New booking', icon: ICONS.newBooking },
+  { href: '/dashboard/bookings/new', label: 'New booking', icon: ICONS.newBooking },
   { label: 'All bookings', icon: ICONS.bookings },
   { label: 'Rooms', icon: ICONS.rooms },
 ]

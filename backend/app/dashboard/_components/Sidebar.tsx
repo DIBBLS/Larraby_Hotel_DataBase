@@ -71,7 +71,7 @@ const NAV_GUESTS: NavItem[] = [
   { href: '/dashboard/guests', label: 'Guests', icon: ICONS.guests },
 ]
 const NAV_FINANCE: NavItem[] = [
-  { label: 'Payments', icon: ICONS.payments },
+  { href: '/dashboard/payments', label: 'Payments', icon: ICONS.payments },
   { label: 'Reports', icon: ICONS.reports },
 ]
 

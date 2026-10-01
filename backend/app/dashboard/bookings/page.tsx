@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
 
 type BookingRow = {
   id: string
@@ -76,6 +76,14 @@ function actionsFor(status: string): { action: string; label: string; kind: 'pri
 }
 
 const LIMIT = 20
+const PAYMENT_METHODS = ['CASH', 'BANK_TRANSFER', 'CARD', 'POS', 'PAYSTACK']
+const PAYMENT_METHOD_LABEL: Record<string, string> = {
+  CASH: 'Cash',
+  BANK_TRANSFER: 'Bank transfer',
+  CARD: 'Card',
+  POS: 'POS',
+  PAYSTACK: 'Paystack',
+}
 
 export default function AllBookingsPage() {
   const [status, setStatus] = useState('')
@@ -89,6 +97,13 @@ export default function AllBookingsPage() {
   const [error, setError] = useState<string | null>(null)
   const [actionInFlight, setActionInFlight] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
+
+  const [paymentFormFor, setPaymentFormFor] = useState<string | null>(null)
+  const [paymentAmount, setPaymentAmount] = useState('')
+  const [paymentMethod, setPaymentMethod] = useState('CASH')
+  const [paymentReference, setPaymentReference] = useState('')
+  const [paymentSubmitting, setPaymentSubmitting] = useState(false)
+  const [paymentError, setPaymentError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -145,6 +160,47 @@ export default function AllBookingsPage() {
       setActionError('Could not reach the server')
     } finally {
       setActionInFlight(null)
+    }
+  }
+
+  function openPaymentForm(b: BookingRow, balance: number) {
+    setPaymentFormFor(b.id)
+    setPaymentAmount(balance.toString())
+    setPaymentMethod('CASH')
+    setPaymentReference('')
+    setPaymentError(null)
+  }
+
+  async function submitPayment(bookingId: string) {
+    const amount = Number(paymentAmount)
+    if (!amount || amount <= 0) {
+      setPaymentError('Enter a valid amount')
+      return
+    }
+
+    setPaymentError(null)
+    setPaymentSubmitting(true)
+    try {
+      const res = await fetch(`/api/bookings/${bookingId}/payments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount,
+          method: paymentMethod,
+          reference: paymentReference || undefined,
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setPaymentError(data.error ?? 'Could not record the payment')
+        return
+      }
+      setPaymentFormFor(null)
+      await load()
+    } catch {
+      setPaymentError('Could not reach the server')
+    } finally {
+      setPaymentSubmitting(false)
     }
   }
 
@@ -214,36 +270,101 @@ export default function AllBookingsPage() {
               <tbody>
                 {bookings.map((b) => {
                   const balance = Number(b.totalAmount) - Number(b.amountPaid)
+                  const canPay = balance > 0 && b.status !== 'CANCELLED' && b.status !== 'NO_SHOW'
                   return (
-                    <tr key={b.id}>
-                      <td>{b.bookingRef}</td>
-                      <td>
-                        <div style={{ fontWeight: 600 }}>{b.guest.firstName} {b.guest.lastName}</div>
-                        <div style={{ fontSize: 11.5, color: 'var(--muted)' }}>{b.guest.phone}</div>
-                      </td>
-                      <td>{b.room.roomNumber} <span style={{ color: 'var(--muted)' }}>· {b.room.roomType.name}</span></td>
-                      <td>{shortDate(b.checkInDate)} – {shortDate(b.checkOutDate)}</td>
-                      <td style={{ color: balance > 0 ? 'var(--bad)' : 'var(--good)', fontWeight: 600 }}>
-                        {balance > 0 ? naira(balance) : 'Paid'}
-                      </td>
-                      <td><span className={`lh-pill ${SOURCE_PILL_CLASS[b.source] ?? 'lh-pill-phone'}`}>{SOURCE_LABEL[b.source] ?? b.source}</span></td>
-                      <td><span className={`lh-pill ${STATUS_PILL_CLASS[b.status] ?? 'lh-pill-phone'}`}>{STATUS_LABEL[b.status] ?? b.status}</span></td>
-                      <td>
-                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                          {actionsFor(b.status).map(({ action, label, kind }) => (
-                            <button
-                              key={action}
-                              type="button"
-                              className={kind === 'danger' ? 'lh-btn-sm lh-btn-sm-danger' : 'lh-btn-sm lh-btn-sm-primary'}
-                              disabled={actionInFlight === `${b.id}:${action}`}
-                              onClick={() => runAction(b.id, action)}
-                            >
-                              {actionInFlight === `${b.id}:${action}` ? '…' : label}
-                            </button>
-                          ))}
-                        </div>
-                      </td>
-                    </tr>
+                    <Fragment key={b.id}>
+                      <tr>
+                        <td>{b.bookingRef}</td>
+                        <td>
+                          <div style={{ fontWeight: 600 }}>{b.guest.firstName} {b.guest.lastName}</div>
+                          <div style={{ fontSize: 11.5, color: 'var(--muted)' }}>{b.guest.phone}</div>
+                        </td>
+                        <td>{b.room.roomNumber} <span style={{ color: 'var(--muted)' }}>· {b.room.roomType.name}</span></td>
+                        <td>{shortDate(b.checkInDate)} – {shortDate(b.checkOutDate)}</td>
+                        <td style={{ color: balance > 0 ? 'var(--bad)' : 'var(--good)', fontWeight: 600 }}>
+                          {balance > 0 ? naira(balance) : 'Paid'}
+                        </td>
+                        <td><span className={`lh-pill ${SOURCE_PILL_CLASS[b.source] ?? 'lh-pill-phone'}`}>{SOURCE_LABEL[b.source] ?? b.source}</span></td>
+                        <td><span className={`lh-pill ${STATUS_PILL_CLASS[b.status] ?? 'lh-pill-phone'}`}>{STATUS_LABEL[b.status] ?? b.status}</span></td>
+                        <td>
+                          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                            {actionsFor(b.status).map(({ action, label, kind }) => (
+                              <button
+                                key={action}
+                                type="button"
+                                className={kind === 'danger' ? 'lh-btn-sm lh-btn-sm-danger' : 'lh-btn-sm lh-btn-sm-primary'}
+                                disabled={actionInFlight === `${b.id}:${action}`}
+                                onClick={() => runAction(b.id, action)}
+                              >
+                                {actionInFlight === `${b.id}:${action}` ? '…' : label}
+                              </button>
+                            ))}
+                            {canPay && (
+                              <button
+                                type="button"
+                                className="lh-btn-sm lh-btn-sm-primary"
+                                style={{ background: 'var(--gold-deep)' }}
+                                onClick={() => openPaymentForm(b, balance)}
+                              >
+                                Record payment
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                      {paymentFormFor === b.id && (
+                        <tr>
+                          <td colSpan={8} style={{ background: 'var(--paper)' }}>
+                            {paymentError && <div className="lh-error-banner" style={{ marginBottom: 10 }}>{paymentError}</div>}
+                            <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+                              <div className="lh-field-sm" style={{ width: 130 }}>
+                                <label htmlFor={`amount-${b.id}`}>Amount</label>
+                                <input
+                                  id={`amount-${b.id}`}
+                                  type="number"
+                                  min={1}
+                                  max={balance}
+                                  value={paymentAmount}
+                                  onChange={(e) => setPaymentAmount(e.target.value)}
+                                />
+                              </div>
+                              <div className="lh-field-sm" style={{ width: 150 }}>
+                                <label htmlFor={`method-${b.id}`}>Method</label>
+                                <select id={`method-${b.id}`} value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)}>
+                                  {PAYMENT_METHODS.map((m) => (
+                                    <option key={m} value={m}>{PAYMENT_METHOD_LABEL[m]}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="lh-field-sm" style={{ width: 170 }}>
+                                <label htmlFor={`ref-${b.id}`}>Reference (optional)</label>
+                                <input
+                                  id={`ref-${b.id}`}
+                                  value={paymentReference}
+                                  onChange={(e) => setPaymentReference(e.target.value)}
+                                  placeholder="Transfer/POS ref…"
+                                />
+                              </div>
+                              <button
+                                type="button"
+                                className="lh-btn-primary"
+                                disabled={paymentSubmitting}
+                                onClick={() => submitPayment(b.id)}
+                              >
+                                {paymentSubmitting ? 'Recording…' : `Record ${naira(Number(paymentAmount) || 0)}`}
+                              </button>
+                              <button
+                                type="button"
+                                className="lh-btn-secondary"
+                                onClick={() => setPaymentFormFor(null)}
+                              >
+                                Cancel
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
                   )
                 })}
               </tbody>

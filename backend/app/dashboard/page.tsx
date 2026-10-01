@@ -185,12 +185,13 @@ export default async function DashboardPage() {
         <section className="lh-panel">
           <div className="lh-panel-head">
             <h2 className="lh-panel-title">Returning guests</h2>
+            <a href="/dashboard/guests" className="lh-panel-action">View all &#8599;</a>
           </div>
           {returningGuests.length === 0 ? (
             <p className="lh-empty">No repeat guests yet.</p>
           ) : (
             returningGuests.map((g) => (
-              <div className="lh-returning-row" key={g.id}>
+              <a href={`/dashboard/guests/${g.id}`} className="lh-returning-row" key={g.id}>
                 <div className="lh-returning-avatar">{initialsFor(g.name)}</div>
                 <div className="lh-booking-info">
                   <div className="lh-returning-name">{g.name}</div>
@@ -199,7 +200,7 @@ export default async function DashboardPage() {
                   </div>
                 </div>
                 <span className="lh-returning-stays">{g.stays} stays</span>
-              </div>
+              </a>
             ))
           )}
         </section>

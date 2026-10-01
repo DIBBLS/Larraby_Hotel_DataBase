@@ -68,8 +68,7 @@ const NAV_MAIN: NavItem[] = [
   { href: '/dashboard/rooms', label: 'Rooms', icon: ICONS.rooms },
 ]
 const NAV_GUESTS: NavItem[] = [
-  { label: 'Guests', icon: ICONS.guests },
-  { label: 'Returning', icon: ICONS.returning },
+  { href: '/dashboard/guests', label: 'Guests', icon: ICONS.guests },
 ]
 const NAV_FINANCE: NavItem[] = [
   { label: 'Payments', icon: ICONS.payments },

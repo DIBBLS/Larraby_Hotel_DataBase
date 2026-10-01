@@ -221,6 +221,14 @@ button { font-family: var(--font-body); }
 .lh-btn-sm-primary { background: var(--ink); color: #fff; border: none; }
 .lh-btn-sm-danger { background: var(--bad-wash); color: var(--bad); border: 1px solid transparent; }
 
+/* ── Reports — simple monthly bar charts ────────────────────── */
+.lh-chart-bars { display: flex; align-items: flex-end; gap: 10px; height: 160px; padding-top: 20px; }
+.lh-chart-col { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+.lh-chart-value { font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.lh-chart-bar { width: 60%; min-width: 10px; border-radius: 4px 4px 0 0; background: var(--gold); }
+.lh-chart-bar.occupancy { background: var(--online); }
+.lh-chart-month { font-size: 10.5px; color: var(--muted); }
+
 @media (max-width: 900px) {
   .lh-row2, .lh-row3 { grid-template-columns: 1fr; }
   .lh-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }

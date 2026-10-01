@@ -122,14 +122,17 @@ export async function getRoomGrid() {
   }))
 }
 
-export async function getSourceBreakdown() {
-  const startOfMonth = new Date()
-  startOfMonth.setDate(1)
-  startOfMonth.setHours(0, 0, 0, 0)
+export async function getSourceBreakdown(since?: Date) {
+  const start = since ?? (() => {
+    const d = new Date()
+    d.setDate(1)
+    d.setHours(0, 0, 0, 0)
+    return d
+  })()
 
   const grouped = await prisma.booking.groupBy({
     by: ['source'],
-    where: { createdAt: { gte: startOfMonth } },
+    where: { createdAt: { gte: start } },
     _count: { source: true },
   })
 

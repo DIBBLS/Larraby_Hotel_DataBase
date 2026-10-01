@@ -72,7 +72,7 @@ const NAV_GUESTS: NavItem[] = [
 ]
 const NAV_FINANCE: NavItem[] = [
   { href: '/dashboard/payments', label: 'Payments', icon: ICONS.payments },
-  { label: 'Reports', icon: ICONS.reports },
+  { href: '/dashboard/reports', label: 'Reports', icon: ICONS.reports },
 ]
 
 function NavLink({ href, label, icon, active }: { href?: string; label: string; icon: ReactNode; active: boolean }) {

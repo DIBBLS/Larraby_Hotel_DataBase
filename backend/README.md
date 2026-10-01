@@ -198,6 +198,12 @@ GET /api/payments?search=LBY-2026-0001
 ```
 Every payment across every booking (not scoped to one booking — that's `GET /api/bookings/:id/payments`), with the guest, booking ref, room, and which staff member recorded it.
 
+### Reports *(staff)*
+```
+GET /api/reports?months=6
+```
+Revenue by month, occupancy rate by month (nights sold ÷ nights available), revenue by room type, and booking-source breakdown — all over the trailing N months (`months`, 1–24, default 6).
+
 ---
 
 ## Key design decisions
@@ -227,6 +233,8 @@ Returning guests reuse their record; their details can be updated on each bookin
 3. ~~**Rooms management** — view rooms, set/clear maintenance~~ — done, see `app/dashboard/rooms/`
 4. ~~**Payments UI**~~ — done: recordable from `app/dashboard/bookings/`, ledger at `app/dashboard/payments/`
 5. ~~**Guests / returning guests pages**~~ — done, see `app/dashboard/guests/`
-6. **Reports** — monthly occupancy, revenue by room type, source breakdown over time
+6. ~~**Reports** — monthly occupancy, revenue by room type, source breakdown over time~~ — done, see `app/dashboard/reports/`
 7. **Online booking form** — connects to the hotel website at the repo root, replacing/supplementing the WhatsApp-only flow
 8. **Paystack integration** — for online payments, with its own signature-verified webhook (not staff-session gated like the manual payments route)
+
+With 1–6 done, the staff-facing side of the hotel is feature-complete for day-to-day front desk operations. What's left is entirely about the *guest-facing* side: letting guests book themselves on the website instead of everything being staff-entered, and taking real payment online.

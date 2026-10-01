@@ -7,6 +7,7 @@ import { prisma } from '@/lib/prisma'
 import { isRoomAvailable, calculateBookingTotal } from '@/lib/availability'
 import { generateBookingRef } from '@/lib/booking-ref'
 import { requireStaff } from '@/lib/require-staff'
+import { resolveAllowedOrigin, corsHeaders } from '@/lib/cors'
 import { BookingSource } from '@prisma/client'
 
 // Guests booking themselves through the website hit this with no session.
@@ -19,7 +20,22 @@ const SELF_SERVE_SOURCES: BookingSource[] = ['WEBSITE']
 const PHONE_RE = /^\+?\d{7,15}$/
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// The website's booking widget calls this cross-origin (source: WEBSITE,
+// no session) — everything else calling this route is the dashboard,
+// same-origin, unaffected by CORS either way.
+export async function OPTIONS(req: NextRequest) {
+  const origin = resolveAllowedOrigin(req.headers.get('origin'))
+  return new NextResponse(null, { status: 204, headers: corsHeaders(origin) })
+}
+
 export async function POST(req: NextRequest) {
+  const origin = resolveAllowedOrigin(req.headers.get('origin'))
+  const res = await handlePOST(req)
+  for (const [key, value] of Object.entries(corsHeaders(origin))) res.headers.set(key, value)
+  return res
+}
+
+async function handlePOST(req: NextRequest) {
   try {
     const body = await req.json()
 

@@ -1,6 +1,9 @@
 // prisma/seed.ts
 // Run: npx ts-node prisma/seed.ts
-// Seeds the database with room types and sample rooms
+// Seeds the database with room types and sample rooms.
+//
+// Room names/prices match what's actually on the live site (index.html at
+// the repo root) — Larabby's real marketed rooms, not placeholder data.
 
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
@@ -11,77 +14,93 @@ async function main() {
   console.log('Seeding Larabby Hotel database...')
 
   // ── Room Types ──────────────────────────────────────────────
-  const standard = await prisma.roomType.upsert({
-    where: { name: 'Standard' },
-    update: {},
-    create: {
-      name: 'Standard',
-      description: 'Comfortable room with a queen bed, ideal for solo travelers or couples.',
-      pricePerNight: 35000,
-      maxGuests: 2,
-      amenities: ['AC', 'WiFi', 'TV', 'Hot water'],
-    },
-  })
-
+  // update: {} would silently no-op on an existing row, so a price/
+  // description fix here would never reach an already-seeded database.
+  // Every field that create sets is also set on update.
   const deluxe = await prisma.roomType.upsert({
     where: { name: 'Deluxe' },
-    update: {},
+    update: {
+      description: "Larabby's most popular room — a comfortable bed, TV, and air conditioning.",
+      pricePerNight: 25000,
+      maxGuests: 2,
+      amenities: ['TV', 'AC', 'Fan', 'Mirror'],
+    },
     create: {
       name: 'Deluxe',
-      description: 'Spacious room with a king bed and private balcony.',
-      pricePerNight: 55000,
+      description: "Larabby's most popular room — a comfortable bed, TV, and air conditioning.",
+      pricePerNight: 25000,
       maxGuests: 2,
-      amenities: ['AC', 'WiFi', 'TV', 'Balcony', 'Minibar'],
+      amenities: ['TV', 'AC', 'Fan', 'Mirror'],
     },
   })
 
-  const suite = await prisma.roomType.upsert({
-    where: { name: 'Executive Suite' },
-    update: {},
-    create: {
-      name: 'Executive Suite',
-      description: 'Two-room suite with lounge area and kitchenette.',
-      pricePerNight: 90000,
+  const superDeluxe = await prisma.roomType.upsert({
+    where: { name: 'Super Deluxe' },
+    update: {
+      description: 'A larger room with extra seating, for guests who want a bit more space.',
+      pricePerNight: 30000,
       maxGuests: 3,
-      amenities: ['AC', 'WiFi', 'TV', 'Kitchenette', 'Lounge', 'Bathtub'],
+      amenities: ['TV', 'AC', 'Fan', 'Mirror'],
     },
-  })
-
-  const family = await prisma.roomType.upsert({
-    where: { name: 'Family' },
-    update: {},
     create: {
-      name: 'Family',
-      description: 'Two beds, ideal for families with children.',
-      pricePerNight: 70000,
-      maxGuests: 4,
-      amenities: ['AC', 'WiFi', 'TV', 'Two beds', 'Kids welcome'],
+      name: 'Super Deluxe',
+      description: 'A larger room with extra seating, for guests who want a bit more space.',
+      pricePerNight: 30000,
+      maxGuests: 3,
+      amenities: ['TV', 'AC', 'Fan', 'Mirror'],
     },
   })
 
-  console.log('✓ Room types created')
+  const familySuite = await prisma.roomType.upsert({
+    where: { name: 'Family Suite' },
+    update: {
+      description: 'Two beds and two bathrooms — built for families and small groups.',
+      pricePerNight: 40000,
+      maxGuests: 4,
+      amenities: ['TV', 'AC'],
+    },
+    create: {
+      name: 'Family Suite',
+      description: 'Two beds and two bathrooms — built for families and small groups.',
+      pricePerNight: 40000,
+      maxGuests: 4,
+      amenities: ['TV', 'AC'],
+    },
+  })
+
+  // The old placeholder catalog (Standard, original "Family", Executive
+  // Suite) doesn't reflect any real Larabby room — drop it now that every
+  // room below has been reassigned off it. Safe: no Room can still
+  // reference these by the time this runs (see room upserts below).
+  await prisma.roomType.deleteMany({
+    where: { name: { in: ['Standard', 'Family', 'Executive Suite'] } },
+  })
+
+  console.log('✓ Room types created (Deluxe, Super Deluxe, Family Suite)')
 
   // ── Rooms ────────────────────────────────────────────────────
+  // 6 Deluxe / 2 Super Deluxe / 2 Family Suite — weighted toward Deluxe to
+  // match the live site's room gallery (4 of its 6 photo cards are Deluxe).
   const roomsData = [
-    // Floor 1 — Standard
-    { roomNumber: '101', floor: 1, roomTypeId: standard.id },
-    { roomNumber: '102', floor: 1, roomTypeId: standard.id },
-    { roomNumber: '103', floor: 1, roomTypeId: standard.id },
-    { roomNumber: '104', floor: 1, roomTypeId: family.id },
-    // Floor 2 — Deluxe
+    // Floor 1
+    { roomNumber: '101', floor: 1, roomTypeId: deluxe.id },
+    { roomNumber: '102', floor: 1, roomTypeId: deluxe.id },
+    { roomNumber: '103', floor: 1, roomTypeId: deluxe.id },
+    { roomNumber: '104', floor: 1, roomTypeId: superDeluxe.id },
+    // Floor 2
     { roomNumber: '201', floor: 2, roomTypeId: deluxe.id },
     { roomNumber: '202', floor: 2, roomTypeId: deluxe.id },
     { roomNumber: '203', floor: 2, roomTypeId: deluxe.id },
-    { roomNumber: '204', floor: 2, roomTypeId: family.id },
-    // Floor 3 — Suites
-    { roomNumber: '301', floor: 3, roomTypeId: suite.id },
-    { roomNumber: '302', floor: 3, roomTypeId: suite.id },
+    { roomNumber: '204', floor: 2, roomTypeId: superDeluxe.id },
+    // Floor 3 — suites
+    { roomNumber: '301', floor: 3, roomTypeId: familySuite.id },
+    { roomNumber: '302', floor: 3, roomTypeId: familySuite.id },
   ]
 
   for (const room of roomsData) {
     await prisma.room.upsert({
       where: { roomNumber: room.roomNumber },
-      update: {},
+      update: { floor: room.floor, roomTypeId: room.roomTypeId },
       create: room,
     })
   }

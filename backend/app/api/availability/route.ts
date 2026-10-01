@@ -1,10 +1,25 @@
 // app/api/availability/route.ts
 // GET /api/availability?checkIn=2024-09-12&checkOut=2024-09-14&guests=2&roomTypeId=xxx
+// Public — called from staff dashboard pages (same-origin) and the hotel
+// website's booking widget (cross-origin, see lib/cors.ts).
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getAvailableRooms } from '@/lib/availability'
+import { resolveAllowedOrigin, corsHeaders } from '@/lib/cors'
+
+export async function OPTIONS(req: NextRequest) {
+  const origin = resolveAllowedOrigin(req.headers.get('origin'))
+  return new NextResponse(null, { status: 204, headers: corsHeaders(origin) })
+}
 
 export async function GET(req: NextRequest) {
+  const origin = resolveAllowedOrigin(req.headers.get('origin'))
+  const res = await handleGET(req)
+  for (const [key, value] of Object.entries(corsHeaders(origin))) res.headers.set(key, value)
+  return res
+}
+
+async function handleGET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
 

@@ -69,12 +69,11 @@ async function main() {
   })
 
   // The old placeholder catalog (Standard, original "Family", Executive
-  // Suite) doesn't reflect any real Larabby room — drop it now that every
-  // room below has been reassigned off it. Safe: no Room can still
-  // reference these by the time this runs (see room upserts below).
-  await prisma.roomType.deleteMany({
-    where: { name: { in: ['Standard', 'Family', 'Executive Suite'] } },
-  })
+  // Suite) doesn't reflect any real Larabby room. Left in place rather than
+  // deleted: some already-seeded Room rows still reference them, and
+  // deleting a RoomType that's still referenced violates the Room_roomTypeId
+  // foreign key. They're harmless sitting unused — nothing in the booking
+  // flow looks for them by name anymore.
 
   console.log('✓ Room types created (Deluxe, Super Deluxe, Family Suite)')
 

@@ -120,14 +120,11 @@ export default function RoomsPage() {
           <p className="lh-empty">Loading…</p>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table className="lh-table">
+            <table className="lh-table lh-table-compact">
               <thead>
                 <tr>
                   <th>Room</th>
-                  <th>Type</th>
-                  <th>Floor</th>
                   <th>Status</th>
-                  <th>Details</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -135,18 +132,21 @@ export default function RoomsPage() {
                 {rooms.map((r) => {
                   const canSetMaintenance = r.status === 'AVAILABLE'
                   const isDraftOpen = maintenanceDraftFor === r.id
+                  const detail =
+                    r.status === 'MAINTENANCE' && r.openMaintenance
+                      ? `${r.openMaintenance.reason} — since ${new Date(r.openMaintenance.startDate).toLocaleDateString('en-GB')}`
+                      : r.status === 'OCCUPIED' || r.status === 'RESERVED'
+                        ? 'Has an active booking'
+                        : null
                   return (
                     <tr key={r.id}>
-                      <td style={{ fontWeight: 600 }}>{r.roomNumber}</td>
-                      <td>{r.type}</td>
-                      <td>{r.floor}</td>
-                      <td><span className={`lh-pill ${STATUS_PILL_CLASS[r.status] ?? ''}`}>{STATUS_LABEL[r.status] ?? r.status}</span></td>
-                      <td style={{ fontSize: 12.5, color: 'var(--muted)', maxWidth: 220 }}>
-                        {r.status === 'MAINTENANCE' && r.openMaintenance
-                          ? `${r.openMaintenance.reason} — since ${new Date(r.openMaintenance.startDate).toLocaleDateString('en-GB')}`
-                          : r.status === 'OCCUPIED' || r.status === 'RESERVED'
-                            ? 'Has an active booking'
-                            : '—'}
+                      <td>
+                        <div style={{ fontWeight: 600 }}>{r.roomNumber}</div>
+                        <div style={{ fontSize: 11.5, color: 'var(--muted)' }}>{r.type} · Floor {r.floor}</div>
+                      </td>
+                      <td>
+                        <span className={`lh-pill ${STATUS_PILL_CLASS[r.status] ?? ''}`}>{STATUS_LABEL[r.status] ?? r.status}</span>
+                        {detail && <div style={{ fontSize: 11.5, color: 'var(--muted)', marginTop: 4, maxWidth: 220 }}>{detail}</div>}
                       </td>
                       <td>
                         {r.status === 'MAINTENANCE' ? (
@@ -159,7 +159,7 @@ export default function RoomsPage() {
                             {actionInFlight === r.id ? '…' : 'Clear maintenance'}
                           </button>
                         ) : isDraftOpen ? (
-                          <div style={{ display: 'flex', gap: 6, alignItems: 'center', minWidth: 220 }}>
+                          <div style={{ display: 'flex', gap: 6, alignItems: 'center', minWidth: 190 }}>
                             <input
                               autoFocus
                               value={reasonDraft}

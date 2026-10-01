@@ -212,6 +212,7 @@ button { font-family: var(--font-body); }
 
 /* ── All bookings table ──────────────────────────────────── */
 .lh-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 760px; }
+.lh-table-compact { min-width: 480px; }
 .lh-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); padding: 0 10px 10px; border-bottom: 1px solid var(--border); }
 .lh-table td { padding: 12px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
 .lh-table tr:last-child td { border-bottom: none; }

@@ -94,11 +94,11 @@ function NavLink({ href, label, icon, active }: { href?: string; label: string; 
   )
 }
 
-export function Sidebar() {
+export function Sidebar({ open = false }: { open?: boolean }) {
   const pathname = usePathname()
 
   return (
-    <aside className="lh-sidebar">
+    <aside className={`lh-sidebar${open ? ' lh-sidebar-open' : ''}`}>
       <div className="lh-sidebar-brand">
         <div className="lh-sidebar-mark">
           <span>L</span>

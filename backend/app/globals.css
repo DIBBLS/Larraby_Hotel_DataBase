@@ -94,11 +94,15 @@ button { font-family: var(--font-body); }
 .lh-nav-soon { margin-left: auto; font-size: 9px; letter-spacing: 0.04em; text-transform: uppercase; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 999px; flex-shrink: 0; }
 .lh-nav-icon { width: 18px; height: 18px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
 
+.lh-nav-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); border: none; padding: 0; z-index: 40; cursor: default; }
+
 .lh-main-col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 
 .lh-topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 28px; background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.lh-topbar-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .lh-topbar-date { font-size: 13px; color: var(--muted); }
 .lh-topbar-right { display: flex; align-items: center; gap: 14px; }
+.lh-hamburger { display: none; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
 .lh-icon-btn { position: relative; width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .lh-notif-dot { position: absolute; top: 6px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: var(--bad); border: 1.5px solid var(--surface); }
 .lh-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--gold-wash); color: var(--gold-deep); display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 700; }
@@ -234,8 +238,13 @@ button { font-family: var(--font-body); }
   .lh-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
-  .lh-sidebar { width: 68px; }
-  .lh-sidebar .lh-nav-label, .lh-sidebar .lh-nav-section, .lh-sidebar .lh-nav-soon, .lh-sidebar-sub, .lh-sidebar-name { display: none; }
+  .lh-hamburger { display: flex; }
+  .lh-sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 248px; max-width: 80vw;
+    transform: translateX(-100%); transition: transform 0.25s ease; z-index: 50;
+    box-shadow: 8px 0 24px rgba(0,0,0,0.2);
+  }
+  .lh-sidebar.lh-sidebar-open { transform: translateX(0); }
   .lh-content { padding: 20px; }
   .lh-stats { grid-template-columns: 1fr; }
   .lh-room-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }

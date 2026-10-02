@@ -11,7 +11,7 @@ function initialsFor(name?: string | null) {
     .join('')
 }
 
-export function Topbar() {
+export function Topbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const { data: session } = useSession()
 
   const today = new Date().toLocaleDateString('en-GB', {
@@ -23,7 +23,14 @@ export function Topbar() {
 
   return (
     <header className="lh-topbar">
-      <div className="lh-topbar-date">{today}</div>
+      <div className="lh-topbar-left">
+        <button type="button" className="lh-hamburger" aria-label="Open menu" onClick={onMenuClick}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--body)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 6h18M3 12h18M3 18h18" />
+          </svg>
+        </button>
+        <div className="lh-topbar-date">{today}</div>
+      </div>
       <div className="lh-topbar-right">
         <button type="button" className="lh-icon-btn" aria-label="Notifications">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--body)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
